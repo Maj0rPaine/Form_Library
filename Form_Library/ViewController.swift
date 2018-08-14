@@ -26,33 +26,21 @@ extension Hotspot {
     - context: RenderingContext struct
  - Returns: Tuple containing cell sections and form observer
  */
-func hotspotForm(context: RenderingContext<Hotspot>) -> ([Section], Observer<Hotspot>) {
+func hotspotForm(context: RenderingContext<Hotspot>) -> RenderedElement<[Section], Hotspot> {
     var strongReferences: [Any] = []
     var updates: [(Hotspot) -> ()] = []
     
+    let renderedToggle = uiSwitch(context: context, keyPath: \Hotspot.isEnabled)
+    strongReferences.append(contentsOf: renderedToggle.strongReferences)
+    updates.append(renderedToggle.update)
+    
     let toggleCell = FormCell(style: .value1, reuseIdentifier: nil)
-    let toggle = UISwitch()
     toggleCell.textLabel?.text = "Personal Hotspot"
-    toggleCell.contentView.addSubview(toggle)
-    toggle.translatesAutoresizingMaskIntoConstraints = false
-    
-    let toggleTarget = TargetAction {
-        context.change { $0.isEnabled = toggle.isOn }
-    }
-    
-    // Append toggle target as a strong reference
-    strongReferences.append(toggleTarget)
-    
-    toggle.addTarget(toggleTarget, action: #selector(TargetAction.action(_:)), for: .valueChanged)
+    toggleCell.contentView.addSubview(renderedToggle.element)
     toggleCell.contentView.addConstraints([
-        toggle.centerYAnchor.constraint(equalTo: toggleCell.contentView.centerYAnchor),
-        toggle.trailingAnchor.constraint(equalTo: toggleCell.contentView.layoutMarginsGuide.trailingAnchor)
+        renderedToggle.element.centerYAnchor.constraint(equalTo: toggleCell.contentView.centerYAnchor),
+        renderedToggle.element.trailingAnchor.constraint(equalTo: toggleCell.contentView.layoutMarginsGuide.trailingAnchor)
     ])
-    
-    // Append function to update toggle
-    updates.append { state in
-        toggle.isOn = state.isEnabled
-    }
     
     let toggleSection = Section(cells: [toggleCell], footerTitle: nil)
     
@@ -72,28 +60,28 @@ func hotspotForm(context: RenderingContext<Hotspot>) -> ([Section], Observer<Hot
     }
 
     // Build nested password form
-    let (sections, observer) = buildPasswordForm(context: context)
-    let nested = FormViewController(sections: sections, title: "Personal Hotspot Password")
+    let renderedPasswordForm = buildPasswordForm(context: context)
+    let nested = FormViewController(sections: renderedPasswordForm.element, title: "Personal Hotspot Password")
 
     passwordCell.didSelect = {
         context.pushViewController(nested)
     }
     
     let passwordSection = Section(cells: [passwordCell], footerTitle: nil)
-    let combinedStrongReferences = strongReferences + observer.strongReferences
-    
-    return ([
-        toggleSection,
-        passwordSection
-    ], Observer(strongReferences: combinedStrongReferences) { state in
-        // Update nested form's observers
-        observer.update(state)
-        
-        // Aggregate of the update functions
-        for u in updates {
-            u(state)
+
+    return RenderedElement(
+        element: [toggleSection, passwordSection],
+        strongReferences: strongReferences + renderedPasswordForm.strongReferences,
+        update: { state in
+            // Update nested form's observers
+            renderedPasswordForm.update(state)
+            
+            // Aggregate of the update functions
+            for u in updates {
+                u(state)
+            }
         }
-    })
+    )
 }
 
 /**
@@ -102,38 +90,20 @@ func hotspotForm(context: RenderingContext<Hotspot>) -> ([Section], Observer<Hot
     - context: RenderingContext struct
  - Returns: Tuple containing cell section and form observer.
  */
-func buildPasswordForm(context: RenderingContext<Hotspot>) -> ([Section], Observer<Hotspot>) {
-    let textField = UITextField()
-    
-    // Use function type since there is only one update
-    let update: (Hotspot) -> () = { state in
-        textField.text = state.password
-    }
-    
+func buildPasswordForm(context: RenderingContext<Hotspot>) -> RenderedElement<[Section], Hotspot> {
+    let renderedPassword = uiTextField(context: context, keyPath: \Hotspot.password)
     let cell = FormCell(style: .value1, reuseIdentifier: nil)
     cell.textLabel?.text = "Password"
-    cell.contentView.addSubview(textField)
-    textField.translatesAutoresizingMaskIntoConstraints = false
-    
-    let ta1 = TargetAction {
-        context.change { $0.password = textField.text ?? "" }
-    }
-    
-    let ta2 = TargetAction {
-        context.change { $0.password = textField.text ?? "" }
-        context.popViewController()
-    }
-    
-    textField.addTarget(ta1, action: #selector(TargetAction.action(_:)), for: .editingDidEnd)
-    textField.addTarget(ta2, action: #selector(TargetAction.action(_:)), for: .editingDidEndOnExit)
-    
+    cell.contentView.addSubview(renderedPassword.element)
     cell.contentView.addConstraints([
-        textField.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
-        textField.trailingAnchor.constraint(equalTo: cell.contentView.layoutMarginsGuide.trailingAnchor),
-        textField.leadingAnchor.constraint(equalTo: cell.textLabel!.trailingAnchor, constant: 20)
-        ])
+        renderedPassword.element.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
+        renderedPassword.element.trailingAnchor.constraint(equalTo: cell.contentView.layoutMarginsGuide.trailingAnchor),
+        renderedPassword.element.leadingAnchor.constraint(equalTo: cell.textLabel!.trailingAnchor, constant: 20)
+    ])
     
-    return ([
-        Section(cells: [cell], footerTitle: nil)
-    ], Observer(strongReferences: [ta1, ta2], update: update))
+    return RenderedElement(
+        element: [Section(cells: [cell], footerTitle: nil)],
+        strongReferences: renderedPassword.strongReferences,
+        update: renderedPassword.update
+    )
 }
