@@ -96,3 +96,62 @@ class FormViewController: UITableViewController {
         return cell(for: indexPath).shouldHighlight
     }
 }
+
+final class TargetAction {
+    let execute: () -> ()
+    
+    // Init with callback
+    init(_ execute: @escaping() -> ()) {
+        self.execute = execute
+    }
+    @objc func action(_ sender: Any) {
+        execute()
+    }
+}
+
+/// Generic observer that manages strong references and update functions.
+struct Observer<State> {
+    var strongReferences: [Any]
+    var update: (State) -> ()
+}
+
+/// Generic renderingContext holds state, form changes, and actions.
+struct RenderingContext<State> {
+    let state: State
+    let change: ((inout State) -> ()) -> ()
+    let pushViewController: (UIViewController) -> ()
+    let popViewController: () -> ()
+}
+
+class FormDriver<State> {
+    var formViewController: FormViewController!
+    var sections: [Section] = []
+    var observer: Observer<State>!
+    
+    var state:State {
+        didSet {
+            observer.update(state)
+            formViewController.reloadSectionFooters()
+        }
+    }
+    
+    // Initialize with free function hotspotForm.
+    init(initial state: State, build: (RenderingContext<State>) -> ([Section], Observer<State>)) {
+        self.state = state
+        
+        // Create rendering context with state, change and push functions
+        let context = RenderingContext(state: state, change: { [unowned self] f in
+            f(&self.state) // Mutate state
+        }, pushViewController: { [unowned self] vc in
+            self.formViewController.navigationController?.pushViewController(vc, animated: true)
+        }, popViewController: { [unowned self] in
+            self.formViewController.navigationController?.popViewController(animated: true)
+        })
+        
+        let (sections, observer) = build(context)
+        self.sections = sections
+        self.observer = observer
+        observer.update(state)
+        formViewController = FormViewController(sections: sections, title: "Personal Hotspot Settings")
+    }
+}
