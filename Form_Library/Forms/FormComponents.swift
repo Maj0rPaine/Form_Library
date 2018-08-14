@@ -62,3 +62,40 @@ func uiTextField<State>(context: RenderingContext<State>, keyPath: WritableKeyPa
         }
     )
 }
+
+func controlCell<State>(title: String, control: RenderedElement<UIView, State>, leftAligned: Bool = false) -> RenderedElement<FormCell, State> {
+    let cell = FormCell(style: .value1, reuseIdentifier: nil)
+    cell.textLabel?.text = title
+    cell.contentView.addSubview(control.element)
+    cell.contentView.addConstraints([
+        control.element.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
+        control.element.trailingAnchor.constraint(equalTo: cell.contentView.layoutMarginsGuide.trailingAnchor)
+        ])
+    
+    if leftAligned {
+        cell.contentView.addConstraints([
+            control.element.leadingAnchor.constraint(equalTo: cell.textLabel!.trailingAnchor, constant: 20)
+            ])
+    }
+    
+    return RenderedElement(
+        element: cell,
+        strongReferences: control.strongReferences,
+        update: control.update
+    )
+}
+
+func detailTextCell<State>(title: String, keyPath: KeyPath<State, String>, didSelect: @escaping () -> ()) -> RenderedElement<FormCell, State> {
+    let cell = FormCell(style: .value1, reuseIdentifier: nil)
+    cell.textLabel?.text = "Password"
+    cell.accessoryType = .disclosureIndicator
+    cell.shouldHighlight = true
+    cell.didSelect = didSelect
+    return RenderedElement(
+        element: cell,
+        strongReferences: [],
+        update: { state in
+            cell.detailTextLabel?.text = state[keyPath: keyPath]
+    }
+    )
+}
