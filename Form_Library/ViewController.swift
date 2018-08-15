@@ -8,10 +8,28 @@
 
 import UIKit
 
+enum ShowPreview {
+    case always
+    case never
+    case whenUnlocked
+    
+    static let all: [ShowPreview] = [.always, .whenUnlocked, .never]
+    
+    var text: String {
+        switch self {
+        case .always: return "Always"
+        case .whenUnlocked: return "When Unlocked"
+        case .never: return "Never"
+        }
+    }
+}
+
 /// Hotspot settings
 struct Hotspot {
     var isEnabled: Bool = true
-    var password: String = "hello"
+    var password: String = "myPassword"
+    var networkName: String = "my network"
+    var showPreview: ShowPreview = .always
 }
 
 extension Hotspot {
@@ -20,15 +38,23 @@ extension Hotspot {
     }
 }
 
-let hotspotForm: Form<Hotspot> = sections([
-    section([
-        controlCell(title: "Personal Hotspot", control: uiSwitch(keyPath: \Hotspot.isEnabled))
-        ], footer: \Hotspot.enabledSectionTitle),
-    section([
-        detailTextCell(title: "Password", keyPath: \Hotspot.password, form: buildPasswordForm)
-    ])
+let showPreviewForm: Form<Hotspot> = sections([
+    section(
+        ShowPreview.all.map { option in
+            optionCell(title: option.text, option: option, keyPath: \.showPreview)
+        }
+    )
 ])
 
-let buildPasswordForm: Form<Hotspot> = sections([
-    section([controlCell(title: "Password", control: uiTextField(keyPath: \Hotspot.password), leftAligned: true)])
+let hotspotForm: Form<Hotspot> = sections([
+    section([
+        controlCell(title: "Personal Hotspot", control: uiSwitch(keyPath: \.isEnabled))
+    ], footer: \Hotspot.enabledSectionTitle),
+    section([
+        detailTextCell(title: "Notification", keyPath: \.showPreview.text, form: showPreviewForm)
+    ]),
+    section([
+        nestedTextField(title: "Password", keyPath: \.password),
+        nestedTextField(title: "Network Name", keyPath: \.networkName)
+    ])
 ])

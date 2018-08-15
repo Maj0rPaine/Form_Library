@@ -8,9 +8,7 @@
 
 import UIKit
 
-typealias Form<A> = Rendered<A, [Section]>
-
-func uiSwitch<State>(keyPath: WritableKeyPath<State, Bool>) -> Rendered<State, UIView> {
+func uiSwitch<State>(keyPath: WritableKeyPath<State, Bool>) -> Element<UIView, State> {
     return { context in
         let toggle = UISwitch()
         toggle.translatesAutoresizingMaskIntoConstraints = false
@@ -30,7 +28,7 @@ func uiSwitch<State>(keyPath: WritableKeyPath<State, Bool>) -> Rendered<State, U
     }
 }
 
-func uiTextField<State>(keyPath: WritableKeyPath<State, String>) -> Rendered<State, UIView> {
+func uiTextField<State>(keyPath: WritableKeyPath<State, String>) -> Element<UIView, State> {
     return { context in
         let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
@@ -57,7 +55,7 @@ func uiTextField<State>(keyPath: WritableKeyPath<State, String>) -> Rendered<Sta
     }
 }
 
-func controlCell<State>(title: String, control: @escaping Rendered<State, UIView>, leftAligned: Bool = false) -> Rendered<State, FormCell> {
+func controlCell<State>(title: String, control: @escaping Element<UIView, State>, leftAligned: Bool = false) -> Element<FormCell, State> {
     return { context in
         let cell = FormCell(style: .value1, reuseIdentifier: nil)
         let renderedControl = control(context)
@@ -82,10 +80,10 @@ func controlCell<State>(title: String, control: @escaping Rendered<State, UIView
     }
 }
 
-func detailTextCell<State>(title: String, keyPath: KeyPath<State, String>, form: @escaping Form<State>) -> Rendered<State, FormCell> {
+func detailTextCell<State>(title: String, keyPath: KeyPath<State, String>, form: @escaping Form<State>) -> Element<FormCell, State> {
     return { context in
         let cell = FormCell(style: .value1, reuseIdentifier: nil)
-        cell.textLabel?.text = "Password"
+        cell.textLabel?.text = title
         cell.accessoryType = .disclosureIndicator
         cell.shouldHighlight = true
         
@@ -101,6 +99,27 @@ func detailTextCell<State>(title: String, keyPath: KeyPath<State, String>, form:
             update: { state in
                 cell.detailTextLabel?.text = state[keyPath: keyPath]
                 rendered.update(state)
+        })
+    }
+}
+
+func nestedTextField<State>(title: String, keyPath: WritableKeyPath<State, String>) -> Element<FormCell, State> {
+    let nested: Form<State> = sections([
+        section([controlCell(title: title, control: uiTextField(keyPath: keyPath), leftAligned: true)])
+        ])
+    return detailTextCell(title: title, keyPath: keyPath, form: nested)
+}
+
+func optionCell<Input: Equatable, State>(title: String, option: Input, keyPath: WritableKeyPath<State, Input>) -> Element<FormCell, State> {
+    return { context in
+        let cell = FormCell(style: .value1, reuseIdentifier: nil)
+        cell.textLabel?.text = title
+        cell.shouldHighlight = true
+        cell.didSelect = {
+            context.change { $0[keyPath: keyPath] = option }
+        }
+        return RenderedElement(element: cell, strongReferences: [], update: { state in
+            cell.accessoryType = state[keyPath: keyPath] == option ? .checkmark : .none
         })
     }
 }

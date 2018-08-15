@@ -8,8 +8,8 @@
 
 import UIKit
 
-typealias Rendered<A, Element> = (RenderingContext<A>) -> RenderedElement<Element, A>
-typealias RenderedSection<A> = Rendered<A, Section>
+typealias Element<El, A> = (RenderingContext<A>) -> RenderedElement<El, A>
+typealias Form<A> = Element<[Section], A>
 
 /// Action method with callback for target selector.
 final class TargetAction {
@@ -37,7 +37,7 @@ struct RenderingContext<State> {
     let popViewController: () -> ()
 }
 
-func section<State>(_ cells: [Rendered<State, FormCell>], footer keyPath: KeyPath<State, String?>? = nil) -> RenderedSection<State> {
+func section<State>(_ cells: [Element<FormCell, State>], footer keyPath: KeyPath<State, String?>? = nil) -> Element<Section, State> {
     return { context in
         let renderedCells = cells.map { $0(context) }
         let strongReferences = renderedCells.flatMap { $0.strongReferences }
@@ -54,7 +54,7 @@ func section<State>(_ cells: [Rendered<State, FormCell>], footer keyPath: KeyPat
     }
 }
 
-func sections<State>(_ sections: [RenderedSection<State>]) -> Form<State> {
+func sections<State>(_ sections: [Element<Section, State>]) -> Form<State> {
     return { context in
         let renderedSections = sections.map { $0(context) }
         let strongReferences = renderedSections.flatMap { $0.strongReferences }
