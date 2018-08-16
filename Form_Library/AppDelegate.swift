@@ -13,7 +13,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     var navigationController = UINavigationController()
-    let driver = FormDriver(initial: Hotspot(), build: hotspotForm)
+    let driver = FormDriver(initial: TestForm(), build: testForm)
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.

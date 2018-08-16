@@ -35,6 +35,7 @@ struct RenderingContext<State> {
     let change: ((inout State) -> ()) -> ()
     let pushViewController: (UIViewController) -> ()
     let popViewController: () -> ()
+    let save: () -> ()
 }
 
 func section<State>(_ cells: [Element<FormCell, State>], footer keyPath: KeyPath<State, String?>? = nil) -> Element<Section, State> {
@@ -90,10 +91,15 @@ class FormDriver<State> {
                 self.formViewController.navigationController?.pushViewController(vc, animated: true)
             }, popViewController: { [unowned self] in
                 self.formViewController.navigationController?.popViewController(animated: true)
+            }, save: {
+                print(self.state)
         })
+        
+        let control: Element<UIBarButtonItem, State> = saveBarButton()
+        let renderedSaveButton = control(context)
         
         self.rendered = build(context)
         rendered.update(state)
-        formViewController = FormViewController(sections: rendered.element, title: "Personal Hotspot Settings")
+        formViewController = FormViewController(sections: rendered.element, title: "Title", rightNavButton: renderedSaveButton.element)
     }
 }

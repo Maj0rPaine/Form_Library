@@ -41,11 +41,12 @@ class FormViewController: UITableViewController {
         UIView.setAnimationsEnabled(true)
     }
     
-    init(sections: [Section], title: String, firstResponder: UIResponder? = nil) {
+    init(sections: [Section], title: String?, rightNavButton: UIBarButtonItem?, firstResponder: UIResponder? = nil) {
         self.firstResponder = firstResponder
         self.sections = sections
         super.init(style: .grouped)
         navigationItem.title = title
+        navigationItem.rightBarButtonItem = rightNavButton
     }
     
     required init?(coder aDecoder: NSCoder) {

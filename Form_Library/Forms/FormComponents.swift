@@ -88,10 +88,9 @@ func detailTextCell<State>(title: String, keyPath: KeyPath<State, String>, form:
         cell.shouldHighlight = true
         
         let rendered = form(context)
-        let nested = FormViewController(sections: rendered.element, title: title)
+        let nested = FormViewController(sections: rendered.element, title: title, rightNavButton: nil)
         cell.didSelect = {
             context.pushViewController(nested)
-            
         }
         return RenderedElement(
             element: cell,
@@ -123,3 +122,4 @@ func optionCell<Input: Equatable, State>(title: String, option: Input, keyPath: 
         })
     }
 }
+

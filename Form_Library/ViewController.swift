@@ -8,53 +8,68 @@
 
 import UIKit
 
-enum ShowPreview {
-    case always
-    case never
-    case whenUnlocked
+enum Menu {
+    case option1
+    case option2
+    case option3
     
-    static let all: [ShowPreview] = [.always, .whenUnlocked, .never]
+    static let all: [Menu] = [.option1, .option3, .option2]
     
     var text: String {
         switch self {
-        case .always: return "Always"
-        case .whenUnlocked: return "When Unlocked"
-        case .never: return "Never"
+        case .option1: return "Option 1"
+        case .option3: return "Option 2"
+        case .option2: return "Option 3"
         }
     }
 }
 
-/// Hotspot settings
-struct Hotspot {
+struct TestForm {
     var isEnabled: Bool = true
-    var password: String = "myPassword"
-    var networkName: String = "my network"
-    var showPreview: ShowPreview = .always
+    var showPreview: Menu = .option1
+    var row1: String = "Text Here"
+    var row2: String = "Text Here"
 }
 
-extension Hotspot {
+extension TestForm {
     var enabledSectionTitle: String? {
-        return isEnabled ? "Personal Hotspot Enabled" : nil
+        return isEnabled ? "Row Enabled" : nil
     }
 }
 
-let showPreviewForm: Form<Hotspot> = sections([
+let menuForm: Form<TestForm> = sections([
     section(
-        ShowPreview.all.map { option in
+        Menu.all.map { option in
             optionCell(title: option.text, option: option, keyPath: \.showPreview)
         }
     )
 ])
 
-let hotspotForm: Form<Hotspot> = sections([
+let testForm: Form<TestForm> = sections([
     section([
-        controlCell(title: "Personal Hotspot", control: uiSwitch(keyPath: \.isEnabled))
-    ], footer: \Hotspot.enabledSectionTitle),
+        controlCell(title: "Switch Row", control: uiSwitch(keyPath: \.isEnabled))
+    ], footer: \TestForm.enabledSectionTitle),
     section([
-        detailTextCell(title: "Notification", keyPath: \.showPreview.text, form: showPreviewForm)
+        detailTextCell(title: "Menu Row", keyPath: \.showPreview.text, form: menuForm)
     ]),
     section([
-        nestedTextField(title: "Password", keyPath: \.password),
-        nestedTextField(title: "Network Name", keyPath: \.networkName)
+        nestedTextField(title: "Text Field Row", keyPath: \.row1),
+        nestedTextField(title: "Text Field Row", keyPath: \.row2)
     ])
 ])
+
+func saveBarButton<State>() -> Element<UIBarButtonItem, State> {
+    return { context in
+        let target = TargetAction {
+            context.save()
+        }
+        let saveBarButton = UIBarButtonItem(title: "Save", style: .plain, target: target, action: #selector(TargetAction.action(_:)))
+        return RenderedElement(
+            element: saveBarButton,
+            strongReferences: [target],
+            update: { state in
+                // TODO: Activity indicator?
+                print(state)
+        })
+    }
+}
