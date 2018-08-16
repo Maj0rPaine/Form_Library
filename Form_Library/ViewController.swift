@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Validator
 
 enum Menu {
     case option1
@@ -24,16 +25,24 @@ enum Menu {
     }
 }
 
-struct TestForm {
+struct TestForm: Validatable {
     var isEnabled: Bool = true
     var showPreview: Menu = .option1
     var nestedTextField: String = "Text Here"
-    var inlineTextField: String = "Text Here"
-}
-
-extension TestForm {
+    var inlineTextField: String = ""
+    
     var enabledSectionTitle: String? {
         return isEnabled ? "Row Enabled" : nil
+    }
+    
+    enum ValidationErrors: String, Error {
+        case emailInvalid = "Email address is invalid"
+        var message: String { return self.rawValue }
+    }
+    
+    func validate() -> ValidationResult {
+        let rule = ValidationRulePattern(pattern: EmailValidationPattern.standard, error: ValidationErrors.emailInvalid)
+        return inlineTextField.validate(rule: rule)
     }
 }
 
@@ -59,3 +68,17 @@ let formSections: Form<TestForm> = sections([
         controlCell(title: "Inline Text Field", control: uiTextField(keyPath: \.inlineTextField)),
     ])
 ])
+
+class ValidatingFormDriver<State>: FormDriver<State> {
+    init(initial state: State, build: (RenderingContext<State>) -> RenderedElement<[Section], State>, title: String) {
+        super.init(initial: state, build: build)
+        
+        self.formViewController.title = title
+        self.formViewController.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(saveForm))
+    }
+    
+    @objc func saveForm() {
+        dump(self.state)
+        dump((self.state as! TestForm).validate().isValid)
+    }
+}

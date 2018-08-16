@@ -13,7 +13,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     let navigationController = UINavigationController()
-    let driver = FormDriver(initial: TestForm(), build: formSections)
+    let driver = ValidatingFormDriver(initial: TestForm(), build: formSections, title: "Test Form")
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
@@ -22,19 +22,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.frame = UIScreen.main.bounds
         window?.rootViewController = navigationController
         
-        driver.formViewController.title = "Test Form"
-        driver.formViewController.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(saveForm))
-        
         navigationController.viewControllers = [
             driver.formViewController
         ]
         window?.makeKeyAndVisible()
         
         return true
-    }
-    
-    @objc func saveForm() {
-        dump(driver.state)
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

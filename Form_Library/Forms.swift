@@ -27,7 +27,6 @@ class FormCell: UITableViewCell {
 
 class FormViewController: UITableViewController {
     var sections: [Section] = []
-    var firstResponder: UIResponder?
     
     func reloadSectionFooters() {
         UIView.setAnimationsEnabled(false)
@@ -43,8 +42,7 @@ class FormViewController: UITableViewController {
         UIView.setAnimationsEnabled(true)
     }
     
-    init(sections: [Section], firstResponder: UIResponder? = nil, rightNavItems: [UIBarButtonItem]? = nil) {
-        self.firstResponder = firstResponder
+    init(sections: [Section]) {
         self.sections = sections
         super.init(style: .grouped)
     }
@@ -55,11 +53,6 @@ class FormViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        firstResponder?.becomeFirstResponder()
     }
     
     override func didReceiveMemoryWarning() {
@@ -182,7 +175,8 @@ class FormDriver<State> {
                 self.formViewController.navigationController?.pushViewController(vc, animated: true)
             }, popViewController: { [unowned self] in
                 self.formViewController.navigationController?.popViewController(animated: true)
-            })
+            }
+        )
         
         rendered = build(context)
         rendered.update(state)
