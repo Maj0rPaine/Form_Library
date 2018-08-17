@@ -7,7 +7,7 @@
 //
 
 import UIKit
-//import Validator
+import Validator
 
 enum Menu {
     case option1
@@ -25,7 +25,16 @@ enum Menu {
     }
 }
 
-struct TestForm{//}: Validatable {
+struct ValidatorForm: Validatable {
+    enum Errors: String, Error {
+        case fieldRequired = "Field is required"
+        var message: String { return self.rawValue }
+    }
+    
+    static let minLengthRule = ValidationRuleLength(min: 1, error: Errors.fieldRequired)
+}
+
+struct TestForm {
     var isEnabled: Bool = true
     var showPreview: Menu = .option1
     var nestedTextField: String = "Text Here"
@@ -34,16 +43,10 @@ struct TestForm{//}: Validatable {
     var enabledSectionTitle: String? {
         return isEnabled ? "Row Enabled" : nil
     }
-    
-//    enum ValidationErrors: String, Error {
-//        case emailInvalid = "Email address is invalid"
-//        var message: String { return self.rawValue }
-//    }
-//
-//    func validate() -> ValidationResult {
-//        let rule = ValidationRulePattern(pattern: EmailValidationPattern.standard, error: ValidationErrors.emailInvalid)
-//        return inlineTextField.validate(rule: rule)
-//    }
+
+    var isValid: Bool {
+        return inlineTextField.validate(rule: ValidatorForm.minLengthRule).isValid
+    }
 }
 
 let formMenu: Form<TestForm> = sections([
@@ -70,7 +73,7 @@ let formSections: Form<TestForm> = sections([
 ])
 
 class ValidatingFormDriver<State>: FormDriver<State> {
-    init(initial state: State, build: (RenderingContext<State>) -> RenderedElement<[Section], State>, title: String) {
+    init(initial state: State, build: Element<[Section], State>, title: String) {
         super.init(initial: state, build: build)
         
         self.formViewController.title = title
@@ -78,7 +81,10 @@ class ValidatingFormDriver<State>: FormDriver<State> {
     }
     
     @objc func saveForm() {
-        dump(self.state)
-        //dump((self.state as! TestForm).validate().isValid)
+        dump(state)
+        
+        if let testForm = state as? TestForm, testForm.isValid {
+            // TODO:
+        }
     }
 }
