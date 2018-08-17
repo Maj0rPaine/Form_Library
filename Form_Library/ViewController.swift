@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Validator
+//import Validator
 
 enum Menu {
     case option1
@@ -25,7 +25,7 @@ enum Menu {
     }
 }
 
-struct TestForm: Validatable {
+struct TestForm{//}: Validatable {
     var isEnabled: Bool = true
     var showPreview: Menu = .option1
     var nestedTextField: String = "Text Here"
@@ -35,15 +35,15 @@ struct TestForm: Validatable {
         return isEnabled ? "Row Enabled" : nil
     }
     
-    enum ValidationErrors: String, Error {
-        case emailInvalid = "Email address is invalid"
-        var message: String { return self.rawValue }
-    }
-    
-    func validate() -> ValidationResult {
-        let rule = ValidationRulePattern(pattern: EmailValidationPattern.standard, error: ValidationErrors.emailInvalid)
-        return inlineTextField.validate(rule: rule)
-    }
+//    enum ValidationErrors: String, Error {
+//        case emailInvalid = "Email address is invalid"
+//        var message: String { return self.rawValue }
+//    }
+//
+//    func validate() -> ValidationResult {
+//        let rule = ValidationRulePattern(pattern: EmailValidationPattern.standard, error: ValidationErrors.emailInvalid)
+//        return inlineTextField.validate(rule: rule)
+//    }
 }
 
 let formMenu: Form<TestForm> = sections([
@@ -79,6 +79,6 @@ class ValidatingFormDriver<State>: FormDriver<State> {
     
     @objc func saveForm() {
         dump(self.state)
-        dump((self.state as! TestForm).validate().isValid)
+        //dump((self.state as! TestForm).validate().isValid)
     }
 }
