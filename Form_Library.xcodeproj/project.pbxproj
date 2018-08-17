@@ -82,7 +82,6 @@
 				3FB4AD5C2121F0DF008866D0 /* Form_LibraryTests */,
 				3FB4AD672121F0DF008866D0 /* Form_LibraryUITests */,
 				3FB4AD462121F0DE008866D0 /* Products */,
-				99F5FA7D50F0B3FF7BEF1447 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
