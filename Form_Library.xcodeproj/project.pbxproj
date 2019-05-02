@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3F8F2A87227B8D88001EFE7D /* Controls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8F2A86227B8D88001EFE7D /* Controls.swift */; };
+		3F8F2A89227CD77C001EFE7D /* Masks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8F2A88227CD77C001EFE7D /* Masks.swift */; };
 		3FADA32421221FDA00FA2A6B /* Forms.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FADA32321221FDA00FA2A6B /* Forms.swift */; };
 		3FB4AD492121F0DE008866D0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB4AD482121F0DE008866D0 /* AppDelegate.swift */; };
 		3FB4AD502121F0DF008866D0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3FB4AD4F2121F0DF008866D0 /* Assets.xcassets */; };
@@ -14,6 +16,8 @@
 		3FB4AD5E2121F0DF008866D0 /* Form_LibraryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB4AD5D2121F0DF008866D0 /* Form_LibraryTests.swift */; };
 		3FB4AD692121F0DF008866D0 /* Form_LibraryUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB4AD682121F0DF008866D0 /* Form_LibraryUITests.swift */; };
 		3FB4AD772121F0FC008866D0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB4AD762121F0FC008866D0 /* ViewController.swift */; };
+		3FEE0E1D2279E80E00F4FA70 /* FormsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FEE0E1B2279E80E00F4FA70 /* FormsViewController.swift */; };
+		3FEE0E24227A492E00F4FA70 /* Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FEE0E23227A492E00F4FA70 /* Validation.swift */; };
 		92136010063CA3066EFCDD9F /* Pods_Form_LibraryTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80B50B6CDE6D25BB16451870 /* Pods_Form_LibraryTests.framework */; };
 		B6FB80B460DCA7D17F00EB12 /* Pods_Form_Library.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA541869B5E7DEA102BCC7DF /* Pods_Form_Library.framework */; };
 		B897BA8368EAA9C55F169CB8 /* Pods_Form_LibraryUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EAAF938D42171B233371822E /* Pods_Form_LibraryUITests.framework */; };
@@ -41,6 +45,8 @@
 		13BB25830207B1A6E4701F80 /* Pods-Form_LibraryTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Form_LibraryTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Form_LibraryTests/Pods-Form_LibraryTests.release.xcconfig"; sourceTree = "<group>"; };
 		2369A911CEBF9E98A6205798 /* Pods-Form_Library.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Form_Library.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Form_Library/Pods-Form_Library.debug.xcconfig"; sourceTree = "<group>"; };
 		2897EC605BDB276516D1E906 /* Pods-Form_LibraryUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Form_LibraryUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Form_LibraryUITests/Pods-Form_LibraryUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		3F8F2A86227B8D88001EFE7D /* Controls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Controls.swift; sourceTree = "<group>"; };
+		3F8F2A88227CD77C001EFE7D /* Masks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Masks.swift; sourceTree = "<group>"; };
 		3FADA32321221FDA00FA2A6B /* Forms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Forms.swift; sourceTree = "<group>"; };
 		3FADA3252123051A00FA2A6B /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MyPlayground.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		3FB4AD452121F0DE008866D0 /* Form_Library.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Form_Library.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -55,6 +61,8 @@
 		3FB4AD682121F0DF008866D0 /* Form_LibraryUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Form_LibraryUITests.swift; sourceTree = "<group>"; };
 		3FB4AD6A2121F0DF008866D0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3FB4AD762121F0FC008866D0 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		3FEE0E1B2279E80E00F4FA70 /* FormsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FormsViewController.swift; sourceTree = "<group>"; };
+		3FEE0E23227A492E00F4FA70 /* Validation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Validation.swift; sourceTree = "<group>"; };
 		80B50B6CDE6D25BB16451870 /* Pods_Form_LibraryTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Form_LibraryTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9687F16FA700C71A33C3694 /* Pods-Form_LibraryUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Form_LibraryUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Form_LibraryUITests/Pods-Form_LibraryUITests.release.xcconfig"; sourceTree = "<group>"; };
 		D19F2F9ECD76B0B6068CCCC4 /* Pods-Form_Library.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Form_Library.release.xcconfig"; path = "Pods/Target Support Files/Pods-Form_Library/Pods-Form_Library.release.xcconfig"; sourceTree = "<group>"; };
@@ -117,11 +125,15 @@
 			children = (
 				3FB4AD482121F0DE008866D0 /* AppDelegate.swift */,
 				3FB4AD762121F0FC008866D0 /* ViewController.swift */,
-				3FADA32321221FDA00FA2A6B /* Forms.swift */,
 				3FB4AD4F2121F0DF008866D0 /* Assets.xcassets */,
 				3FB4AD512121F0DF008866D0 /* LaunchScreen.storyboard */,
 				3FB4AD542121F0DF008866D0 /* Info.plist */,
 				3FADA3252123051A00FA2A6B /* MyPlayground.playground */,
+				3FADA32321221FDA00FA2A6B /* Forms.swift */,
+				3FEE0E1B2279E80E00F4FA70 /* FormsViewController.swift */,
+				3F8F2A86227B8D88001EFE7D /* Controls.swift */,
+				3FEE0E23227A492E00F4FA70 /* Validation.swift */,
+				3F8F2A88227CD77C001EFE7D /* Masks.swift */,
 			);
 			path = Form_Library;
 			sourceTree = "<group>";
@@ -358,11 +370,13 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Form_Library/Pods-Form_Library-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/Validator/Validator.framework",
+				"${BUILT_PRODUCTS_DIR}/InputMask/InputMask.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftValidator/SwiftValidator.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Validator.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/InputMask.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftValidator.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -377,7 +391,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				3FADA32421221FDA00FA2A6B /* Forms.swift in Sources */,
+				3F8F2A89227CD77C001EFE7D /* Masks.swift in Sources */,
+				3F8F2A87227B8D88001EFE7D /* Controls.swift in Sources */,
 				3FB4AD492121F0DE008866D0 /* AppDelegate.swift in Sources */,
+				3FEE0E1D2279E80E00F4FA70 /* FormsViewController.swift in Sources */,
+				3FEE0E24227A492E00F4FA70 /* Validation.swift in Sources */,
 				3FB4AD772121F0FC008866D0 /* ViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -482,7 +500,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -536,7 +554,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -556,7 +574,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Form-Library";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -575,7 +593,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Form-Library";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

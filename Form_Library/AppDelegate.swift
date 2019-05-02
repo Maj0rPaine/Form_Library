@@ -13,11 +13,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     let navigationController = UINavigationController()
-    let driver = ValidatingFormDriver(initial: TestForm(), build: formSections, title: "Test Form")
-    
+
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        
         window = UIWindow()
         window?.frame = UIScreen.main.bounds
         window?.rootViewController = navigationController
@@ -26,7 +24,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             driver.formViewController
         ]
         window?.makeKeyAndVisible()
-        
+                
         return true
     }
 

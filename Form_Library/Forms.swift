@@ -2,306 +2,81 @@
 //  Forms.swift
 //  Form_Library
 //
-//  Created by Chris Paine on 8/13/18.
-//  Copyright © 2018 Chris Paine. All rights reserved.
+//  Created by Chris Paine on 4/29/19.
+//  Copyright © 2019 Chris Paine. All rights reserved.
 //
 
 import UIKit
 
-// MARK: - Table view controller
-
-class Section {
-    let cells: [FormCell]
-    var footerTitle: String?
-    
-    init(cells: [FormCell], footerTitle: String?) {
-        self.cells = cells
-        self.footerTitle = footerTitle
-    }
-}
-
-class FormCell: UITableViewCell {
-    var shouldHighlight = false
-    var didSelect: (() -> ())?
-}
-
-class FormViewController: UITableViewController {
-    var sections: [Section] = []
-    
-    func reloadSectionFooters() {
-        UIView.setAnimationsEnabled(false)
-        tableView.beginUpdates()
-        
-        for index in sections.indices {
-            let footer = tableView.footerView(forSection: index)
-            footer?.textLabel?.text = tableView(tableView, titleForFooterInSection: index)
-            footer?.setNeedsLayout()
-        }
-        
-        tableView.endUpdates()
-        UIView.setAnimationsEnabled(true)
-    }
-    
-    init(sections: [Section]) {
-        self.sections = sections
-        super.init(style: .grouped)
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-    func cell(for indexPath: IndexPath) -> FormCell {
-        return sections[indexPath.section].cells[indexPath.row]
-    }
-    
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return sections.count
-    }
-    
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return sections[section].cells.count
-    }
-    
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return cell(for: indexPath)
-    }
-    
-    override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        return sections[section].footerTitle
-    }
-    
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        cell(for: indexPath).didSelect?()
-    }
-    
-    override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        return cell(for: indexPath).shouldHighlight
-    }
-}
-
-// MARK: - Form driver
-
-typealias Element<El, A> = (RenderingContext<A>) -> RenderedElement<El, A>
 typealias Form<A> = Element<[Section], A>
+typealias Element<El, A> = (RenderingContext<A>) -> RenderedElement<El, A>
+typealias RenderedSection<A> = Element<Section, A>
 
-/// Action method with callback for target selector.
-final class TargetAction {
-    let execute: () -> ()
-    init(_ execute: @escaping() -> ()) {
-        self.execute = execute
-    }
-    @objc func action(_ sender: Any) {
-        execute()
-    }
+struct RenderingContext<State> {
+    let state: State
+    let change: ((inout State) -> ()) -> ()
+    let observe: (FormField) -> ()
+    let validate: (FormField) -> ()
+    //let pushViewController: (UIViewController) -> ()
+    //let popViewController: () -> ()
 }
 
-/// Generic observer that manages strong references and update functions.
 struct RenderedElement<Element, State> {
     var element: Element
     var strongReferences: [Any]
     var update: (State) -> ()
 }
 
-/// Generic renderingContext holds state, form changes, and actions.
-struct RenderingContext<State> {
-    let state: State
-    let change: ((inout State) -> ()) -> ()
-    let pushViewController: (UIViewController) -> ()
-    let popViewController: () -> ()
-}
-
-func section<State>(_ cells: [Element<FormCell, State>], footer keyPath: KeyPath<State, String?>? = nil) -> Element<Section, State> {
-    return { context in
-        let renderedCells = cells.map { $0(context) }
-        let strongReferences = renderedCells.flatMap { $0.strongReferences }
-        let section = Section(cells: renderedCells.map { $0.element }, footerTitle: nil)
-        let update: (State) -> () = { state in
-            for c in renderedCells {
-                c.update(state)
-            }
-            if let kp = keyPath {
-                section.footerTitle = state[keyPath: kp]
-            }
-        }
-        return RenderedElement(element: section, strongReferences: strongReferences, update: update)
-    }
-}
-
-func sections<State>(_ sections: [Element<Section, State>]) -> Form<State> {
-    return { context in
-        let renderedSections = sections.map { $0(context) }
-        let strongReferences = renderedSections.flatMap { $0.strongReferences }
-        let update: (State) -> () = { state in
-            for c in renderedSections {
-                c.update(state)
-            }
-        }
-        return RenderedElement(element: renderedSections.map { $0.element }, strongReferences: strongReferences, update: update)
-    }
-}
-
-/// Generic form driver renders form context and observes changes.
 class FormDriver<State> {
     var formViewController: FormViewController!
+    
     var rendered: RenderedElement<[Section], State>!
     
-    var state:State {
+    var formValidation: FormValidation = FormValidation()
+    
+    var state: State {
         didSet {
-            dump(state)
             rendered.update(state)
-            formViewController.reloadSectionFooters()
+            formViewController.reloadSections()
         }
     }
     
-    init(initial state: State, build: (RenderingContext<State>) -> RenderedElement<[Section], State>) {
+    // TODO: init with build closure that returns RenderedElement<[FormField], State>
+    // This will allow you to use form driver with existing UI elements
+    
+    init(initial state: State, build: (RenderingContext<State>) -> RenderedElement<[Section], State>, title: String = "") {
         self.state = state
         
-        // Create rendering context with state, change and push functions
+        // Create form context
         let context = RenderingContext(
             state: state,
             change: { [unowned self] f in
-                f(&self.state) // Mutate state
-            }, pushViewController: { [unowned self] vc in
-                self.formViewController.navigationController?.pushViewController(vc, animated: true)
-            }, popViewController: { [unowned self] in
-                self.formViewController.navigationController?.popViewController(animated: true)
+                f(&self.state)
+            },
+            observe: { [unowned self] field in
+                self.formValidation.register(field)
+            },
+            validate: { [unowned self] field in
+                self.formValidation.validateField(field)
             }
+            //, pushViewController: { [unowned self] vc in
+            //    self.formViewController.navigationController?.pushViewController(vc, animated: true)
+            //}, popViewController: { [unowned self] in
+            //    self.formViewController.navigationController?.popViewController(animated: true)
+            //}
         )
         
-        rendered = build(context)
+        // Build form controls
+        self.rendered = build(context)
+        
+        // Update form state
         rendered.update(state)
-        formViewController = FormViewController(sections: rendered.element)
+        
+        // Set up form tvc
+        formViewController = FormViewController(sections: rendered.element, title: title)
     }
 }
 
-// MARK: - Components
-
-func uiSwitch<State>(keyPath: WritableKeyPath<State, Bool>) -> Element<UIView, State> {
-    return { context in
-        let toggle = UISwitch()
-        toggle.translatesAutoresizingMaskIntoConstraints = false
-        
-        let toggleTarget = TargetAction {
-            context.change { $0[keyPath: keyPath] = toggle.isOn }
-        }
-        toggle.addTarget(toggleTarget, action: #selector(TargetAction.action(_:)), for: .valueChanged)
-        
-        return RenderedElement(
-            element: toggle,
-            strongReferences: [toggleTarget],
-            update: { state in
-                toggle.isOn = state[keyPath: keyPath]
-            }
-        )
-    }
-}
-
-func uiTextField<State>(keyPath: WritableKeyPath<State, String>) -> Element<UIView, State> {
-    return { context in
-        let textField = UITextField()
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        
-        let didEnd = TargetAction {
-            context.change { $0[keyPath: keyPath] = textField.text ?? "" }
-        }
-        
-        let didExit = TargetAction {
-            context.change { $0[keyPath: keyPath] = textField.text ?? "" }
-            context.popViewController()
-        }
-        
-        textField.addTarget(didEnd, action: #selector(TargetAction.action(_:)), for: .editingDidEnd)
-        textField.addTarget(didExit, action: #selector(TargetAction.action(_:)), for: .editingDidEndOnExit)
-        
-        return RenderedElement(
-            element: textField,
-            strongReferences: [didEnd, didExit],
-            update: { state in
-                textField.text = state[keyPath: keyPath]
-        }
-        )
-    }
-}
-
-func controlCell<State>(title: String, control: @escaping Element<UIView, State>, leftAligned: Bool = false) -> Element<FormCell, State> {
-    return { context in
-        let cell = FormCell(style: .value1, reuseIdentifier: nil)
-        let renderedControl = control(context)
-        cell.textLabel?.text = title
-        cell.contentView.addSubview(renderedControl.element)
-        cell.contentView.addConstraints([
-            renderedControl.element.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
-            renderedControl.element.trailingAnchor.constraint(equalTo: cell.contentView.layoutMarginsGuide.trailingAnchor)
-            ])
-        
-        if leftAligned {
-            cell.contentView.addConstraints([
-                renderedControl.element.leadingAnchor.constraint(equalTo: cell.textLabel!.trailingAnchor, constant: 20)
-                ])
-        }
-        
-        return RenderedElement(
-            element: cell,
-            strongReferences: renderedControl.strongReferences,
-            update: renderedControl.update
-        )
-    }
-}
-
-func detailTextCell<State>(title: String, keyPath: KeyPath<State, String>, form: @escaping Form<State>) -> Element<FormCell, State> {
-    return { context in
-        let cell = FormCell(style: .value1, reuseIdentifier: nil)
-        cell.textLabel?.text = title
-        cell.accessoryType = .disclosureIndicator
-        cell.shouldHighlight = true
-        
-        let rendered = form(context)
-        let nested = FormViewController(sections: rendered.element)
-        cell.didSelect = {
-            context.pushViewController(nested)
-        }
-        return RenderedElement(
-            element: cell,
-            strongReferences: rendered.strongReferences,
-            update: { state in
-                cell.detailTextLabel?.text = state[keyPath: keyPath]
-                rendered.update(state)
-        })
-    }
-}
-
-func nestedTextField<State>(title: String, keyPath: WritableKeyPath<State, String>) -> Element<FormCell, State> {
-    let nested: Form<State> = sections([
-        section([controlCell(title: title, control: uiTextField(keyPath: keyPath), leftAligned: true)])
-        ])
-    return detailTextCell(title: title, keyPath: keyPath, form: nested)
-}
-
-func optionCell<Input: Equatable, State>(title: String, option: Input, keyPath: WritableKeyPath<State, Input>) -> Element<FormCell, State> {
-    return { context in
-        let cell = FormCell(style: .value1, reuseIdentifier: nil)
-        cell.textLabel?.text = title
-        cell.shouldHighlight = true
-        cell.didSelect = {
-            context.change { $0[keyPath: keyPath] = option }
-        }
-        return RenderedElement(element: cell, strongReferences: [], update: { state in
-            cell.accessoryType = state[keyPath: keyPath] == option ? .checkmark : .none
-        })
-    }
-}
-
-///// Bind parent form to nested child form
 //func bind<State, NestedState>(form: @escaping Form<NestedState>, to keyPath: WritableKeyPath<State, NestedState>) -> Form<State> {
 //    return { context in
 //        let nestedContext = RenderingContext<NestedState>(state: context.state[keyPath: keyPath], change: { nestedChange in
@@ -315,3 +90,189 @@ func optionCell<Input: Equatable, State>(title: String, option: Input, keyPath: 
 //        })
 //    }
 //}
+
+// MARK: - Controls
+
+final class TargetAction {
+    let execute: () -> ()
+    init(_ execute: @escaping() -> ()) {
+        self.execute = execute
+    }
+    
+    @objc func action(_ sender: Any) {
+        execute()
+    }
+}
+
+func formSwitch<State>(keyPath: WritableKeyPath<State, Bool>) -> Element<UIView, State> {
+    return { context in
+        let toggle = UISwitch()
+        toggle.translatesAutoresizingMaskIntoConstraints = false
+        let toggleTarget = TargetAction {
+            context.change { $0[keyPath: keyPath] = toggle.isOn }
+        }
+        toggle.addTarget(toggleTarget, action: #selector(TargetAction.action(_:)), for: .valueChanged)
+        return RenderedElement(element: toggle, strongReferences: [toggleTarget], update: { state in
+            toggle.isOn = state[keyPath: keyPath]
+        })
+    }
+}
+
+func formTextField<State>(textField: FormField, keyPath: WritableKeyPath<State, String>) -> Element<UIView, State> {
+    return { context in
+        let didUpdate = TargetAction {
+            context.change { $0[keyPath: keyPath] = textField.text ?? "" }
+            context.validate(textField)
+        }
+        
+        textField.addTarget(didUpdate, action: #selector(TargetAction.action(_:)), for: .editingDidEnd)
+        textField.addTarget(didUpdate, action: #selector(TargetAction.action(_:)), for: .editingDidEndOnExit)
+        textField.addTarget(didUpdate, action: #selector(TargetAction.action(_:)), for: .editingChanged)
+    
+        context.observe(textField)
+        
+        return RenderedElement(element: textField, strongReferences: [didUpdate], update: { state in
+            textField.text = state[keyPath: keyPath]
+        })
+    }
+}
+
+func formPicker<State>(formPicker: FormPicker, keyPath: WritableKeyPath<State, String>) -> Element<UIView, State> {
+    return { context in
+        let didUpdate = TargetAction {
+            context.validate(formPicker.textField)
+        }
+        
+        formPicker.didSelect = { value in
+            context.change { $0[keyPath: keyPath] = value }
+            context.validate(formPicker.textField)
+        }
+        
+        formPicker.textField.addTarget(didUpdate, action: #selector(TargetAction.action(_:)), for: .editingDidEnd)
+        formPicker.textField.addTarget(didUpdate, action: #selector(TargetAction.action(_:)), for: .editingDidEndOnExit)
+        
+        context.observe(formPicker.textField)
+        
+        return RenderedElement(element: formPicker.textField, strongReferences: [didUpdate], update: { state in
+            formPicker.selectRow(value: state[keyPath: keyPath])
+            formPicker.textField.text = state[keyPath: keyPath]
+        })
+    }
+}
+
+// MARK: - Cells
+
+func validatingCell<State>(control: @escaping Element<UIView, State>) -> Element<FormCell, State> {
+    return { context in
+        let renderedControl = control(context)
+        let cell = FormCell(style: .value1, reuseIdentifier: nil)
+        cell.detailTextLabel?.textColor = .red
+        cell.contentView.addSubview(renderedControl.element)
+        cell.contentView.addConstraints([
+            renderedControl.element.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
+            renderedControl.element.leadingAnchor.constraint(equalTo:  cell.contentView.layoutMarginsGuide.leadingAnchor),
+            renderedControl.element.trailingAnchor.constraint(equalTo: cell.contentView.layoutMarginsGuide.trailingAnchor)
+            ])
+        
+        return RenderedElement(element: cell, strongReferences: renderedControl.strongReferences, update: renderedControl.update)
+    }
+}
+
+//func detailTextCell<State>(title: String, keyPath: KeyPath<State, String>, form: @escaping Form<State>) -> Element<FormCell, State> {
+//    return { context in
+//        let cell = FormCell(style: .value1, reuseIdentifier: nil)
+//        cell.textLabel?.text = title
+//        cell.accessoryType = .disclosureIndicator
+//        cell.shouldHighlight = true
+//
+//        let rendered = form(context)
+//        let nested = FormViewController(sections: rendered.element, title: title)
+//        cell.didSelect = {
+//            context.pushViewController(nested)
+//        }
+//        return RenderedElement(element: cell, strongReferences: rendered.strongReferences, update: { state in
+//            cell.detailTextLabel?.text = state[keyPath: keyPath]
+//            rendered.update(state)
+//            nested.reloadSections()
+//        })
+//    }
+//}
+//
+//func nestedTextField<State>(title: String, keyPath: WritableKeyPath<State, String>) -> Element<FormCell, State> {
+//    let nested: Form<State> =
+//        sections([
+//            section([
+//                controlCell(title: title, control: formTextField(keyPath: keyPath), leftAligned: true)
+//                ])
+//            ])
+//    return detailTextCell(title: title, keyPath: keyPath, form: nested)
+//}
+//
+//func controlCell<State>(title: String, control: @escaping Element<UIView, State>, leftAligned: Bool = false) -> Element<FormCell, State> {
+//    return { context in
+//        let renderedControl = control(context)
+//        let cell = FormCell(style: .value1, reuseIdentifier: nil)
+//        cell.textLabel?.text = title
+//        cell.contentView.addSubview(renderedControl.element)
+//        cell.contentView.addConstraints([
+//            renderedControl.element.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
+//            renderedControl.element.trailingAnchor.constraint(equalTo: cell.contentView.layoutMarginsGuide.trailingAnchor)
+//            ])
+//
+//        if leftAligned {
+//            cell.contentView.addConstraint(renderedControl.element.leadingAnchor.constraint(equalTo: cell.textLabel!.trailingAnchor, constant: 20))
+//        }
+//
+//        return RenderedElement(element: cell, strongReferences: renderedControl.strongReferences, update: renderedControl.update)
+//    }
+//}
+//
+//func optionCell<Input: Equatable, State>(title: String, option: Input, keyPath: WritableKeyPath<State, Input>) -> Element<FormCell, State> {
+//    return { context in
+//        let cell = FormCell(style: .value1, reuseIdentifier: nil)
+//        cell.textLabel?.text = title
+//        cell.shouldHighlight = true
+//        cell.didSelect = {
+//            context.change { $0[keyPath: keyPath] = option }
+//        }
+//        return RenderedElement(element: cell, strongReferences: [], update: { state in
+//            cell.accessoryType = state[keyPath: keyPath] == option ? .checkmark : .none
+//        })
+//    }
+//}
+
+// MARK: - Sections
+
+func section<State>(_ cells: [Element<FormCell, State>], footer keyPath: KeyPath<State, String?>? = nil, isVisible: KeyPath<State, Bool>? = nil) -> RenderedSection<State> {
+    return { context in
+        let renderedCells = cells.map { $0(context) }
+        let strongReferences = renderedCells.flatMap { $0.strongReferences }
+        let section = Section(cells: renderedCells.map { $0.element }, footerTitle: nil, isVisible: true)
+        let update: (State) -> () = { state in
+            for c in renderedCells {
+                c.update(state)
+            }
+            if let kp = keyPath {
+                section.footerTitle = state[keyPath: kp]
+            }
+            if let iv = isVisible {
+                section.isVisible = state[keyPath: iv]
+            }
+        }
+        return RenderedElement(element: section, strongReferences: strongReferences, update: update)
+    }
+}
+
+func sections<State>(_ sections: [RenderedSection<State>]) -> Form<State> {
+    return { context in
+        let renderedSections = sections.map { $0(context) }
+        let strongReferences = renderedSections.flatMap { $0.strongReferences }
+        let update: (State) -> () = { state in
+            for c in renderedSections {
+                c.update(state)
+            }
+        }
+        return RenderedElement(element: renderedSections.map { $0.element }, strongReferences: strongReferences, update: update)
+    }
+}
+

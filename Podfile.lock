@@ -1,0 +1,29 @@
+PODS:
+  - InputMask (4.1.1)
+  - SwiftValidator (4.0.0)
+
+DEPENDENCIES:
+  - InputMask
+  - SwiftValidator (from `https://github.com/jpotts18/SwiftValidator.git`, tag `4.2.0`)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - InputMask
+
+EXTERNAL SOURCES:
+  SwiftValidator:
+    :git: https://github.com/jpotts18/SwiftValidator.git
+    :tag: 4.2.0
+
+CHECKOUT OPTIONS:
+  SwiftValidator:
+    :git: https://github.com/jpotts18/SwiftValidator.git
+    :tag: 4.2.0
+
+SPEC CHECKSUMS:
+  InputMask: 88c7c1432816333e884e647f8c2d69485ba525d1
+  SwiftValidator: 58c155c8ae8421ef716a96e52a49984dd54c700c
+
+PODFILE CHECKSUM: e0cab53910225bd1d1c88a8cf90bb27d202c20b7
+
+COCOAPODS: 1.5.3
