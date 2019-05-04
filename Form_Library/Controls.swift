@@ -113,26 +113,3 @@ extension FormPicker {
         picker.selectRow(pickerData.firstIndex(of: value) ?? 0, inComponent: 0, animated: true)
     }
 }
-
-class FormCell: UITableViewCell {
-    var shouldHighlight = false
-    var didSelect: (() -> ())?
-}
-
-class Section {
-    var cells: [FormCell]
-    var footerTitle: String?
-    var isVisible: Bool
-    
-    init(cells: [FormCell], footerTitle: String?, isVisible: Bool) {
-        self.cells = cells
-        self.footerTitle = footerTitle
-        self.isVisible = isVisible
-    }
-}
-
-extension Section: Equatable {
-    static func ==(lhs: Section, rhs: Section) -> Bool {
-        return lhs === rhs
-    }
-}

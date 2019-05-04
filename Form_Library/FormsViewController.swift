@@ -8,6 +8,29 @@
 
 import UIKit
 
+class FormCell: UITableViewCell {
+    var shouldHighlight = false
+    var didSelect: (() -> ())?
+}
+
+class Section {
+    var cells: [FormCell]
+    var footerTitle: String?
+    var isVisible: Bool
+    
+    init(cells: [FormCell], footerTitle: String?, isVisible: Bool) {
+        self.cells = cells
+        self.footerTitle = footerTitle
+        self.isVisible = isVisible
+    }
+}
+
+extension Section: Equatable {
+    static func ==(lhs: Section, rhs: Section) -> Bool {
+        return lhs === rhs
+    }
+}
+
 class FormViewController: UITableViewController {
     var firstResponder: UIResponder?
     

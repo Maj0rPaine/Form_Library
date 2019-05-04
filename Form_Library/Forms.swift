@@ -137,7 +137,7 @@ func formTextField<State>(textField: FormField, keyPath: WritableKeyPath<State, 
     }
 }
 
-func formPicker<State>(formPicker: FormPicker, keyPath: WritableKeyPath<State, String>) -> Element<UIView, State> {
+func formPickerField<State>(formPicker: FormPicker, keyPath: WritableKeyPath<State, String>) -> Element<UIView, State> {
     return { context in
         let didUpdate = TargetAction {
             context.validate(formPicker.textField)
@@ -166,7 +166,6 @@ func validatingCell<State>(control: @escaping Element<UIView, State>) -> Element
     return { context in
         let renderedControl = control(context)
         let cell = FormCell(style: .value1, reuseIdentifier: nil)
-        cell.detailTextLabel?.textColor = .red
         cell.contentView.addSubview(renderedControl.element)
         cell.contentView.addConstraints([
             renderedControl.element.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),

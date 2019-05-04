@@ -78,13 +78,17 @@ import UIKit
 struct PersonalInfo {
     var firstName: String = ""
     var lastName: String = ""
+    var ssn: String = ""
+    var birthdate: String = ""
     var phone: String = ""
-    var birthdate: String = Date().short() ?? ""
+    var address: Address = Address()
 }
 
-struct DriversLicense {
-    var dlNumber: String = ""
-    var dlState: String = ""
+struct Address {
+    var street: String = ""
+    var city: String = ""
+    var state: String = ""
+    var zip: String = ""
 }
 
 let form: Form<PersonalInfo> =
@@ -92,10 +96,16 @@ let form: Form<PersonalInfo> =
         section([
             validatingCell(control: formTextField(textField: FormField(rules: [.required], placeholder: "First Name"), keyPath: \.firstName)),
             validatingCell(control: formTextField(textField: FormField(rules: [.required], placeholder: "Last Name"), keyPath: \.lastName)),
-            validatingCell(control: formTextField(textField: FormField(rules: [.phone], mask: MaskedFormat.phoneFormat, placeholder: "xxx-xxx-xxxx", keyboardType: .decimalPad), keyPath: \.phone)),
-            validatingCell(control: formTextField(textField: FormField(rules: [.date], placeholder: "mm/dd/yyyy", keyboardType: .decimalPad), keyPath: \.birthdate))
-            //validatingCell(control: formPicker(formPicker: FormPicker(with: ["A", "B", "C", "D"], textField: FormField(rules: [.required], placeholder: "State")), keyPath: \.dlState))
-        ])
+            validatingCell(control: formTextField(textField: FormField(rules: [.ssn], mask: MaskedFormat.ssnFormat, placeholder: "SSN", keyboardType: .decimalPad), keyPath: \.ssn)),
+            validatingCell(control: formTextField(textField: FormField(rules: [.date], mask: MaskedFormat.dateFormat, placeholder: "Birthdate", keyboardType: .decimalPad), keyPath: \.birthdate)),
+            validatingCell(control: formTextField(textField: FormField(rules: [.phone], mask: MaskedFormat.phoneFormat, placeholder: "Phone Number", keyboardType: .decimalPad), keyPath: \.phone)),
+        ]),
+        section([
+            validatingCell(control: formTextField(textField: FormField(rules: [.required], placeholder: "Street"), keyPath: \.address.street)),
+            validatingCell(control: formTextField(textField: FormField(rules: [.required], placeholder: "City"), keyPath: \.address.city)),
+            validatingCell(control: formPickerField(formPicker: FormPicker(with: ["A"], textField: FormField(rules: [.required], placeholder: "State")), keyPath: \.address.state)),
+            validatingCell(control: formTextField(textField: FormField(rules: [.zip], placeholder: "Zip Code", keyboardType: .decimalPad), keyPath: \.address.zip))
+            ])
     ])
 
 let driver = TestFormDriver(initial: PersonalInfo(), build: form, title: "Test Form")
@@ -112,19 +122,5 @@ class TestFormDriver<State>: FormDriver<State> {
     @objc func saveForm() {
         dump(state)
         self.formValidation.validate()
-    }
-}
-
-extension Date {
-    static func fromShort(str: String) -> Date? {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MM/dd/yyyy"
-        return formatter.date(from:str)
-    }
-    
-    func short() -> String? {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MM/dd/yyyy"
-        return formatter.string(from: self)
     }
 }
