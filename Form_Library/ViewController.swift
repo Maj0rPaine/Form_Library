@@ -108,19 +108,45 @@ let form: Form<PersonalInfo> =
             ])
     ])
 
+
 let driver = TestFormDriver(initial: PersonalInfo(), build: form, title: "Test Form")
 
 class TestFormDriver<State>: FormDriver<State> {
-    override init(initial state: State, build: Element<[Section], State>, title: String) {
+    override init(initial state: State, build: Element<[Any], State>, title: String) {
         super.init(initial: state, build: build)
-        
+
         self.formViewController.title = title
-        
+
         self.formViewController.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(saveForm))
     }
-    
+
     @objc func saveForm() {
         dump(state)
         self.formValidation.validate()
+    }
+}
+
+class NoRenderViewController: UIViewController {
+    let firstNameField: FormField = FormField(rules: [.required], placeholder: "First Name")
+    
+    lazy var form: Form<PersonalInfo> = {
+        return inputSection([
+            formTextField(textField: firstNameField, keyPath: \.firstName)])
+    }()
+    
+    var driver: FormDriver<PersonalInfo>!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .white
+        
+        let stackview = UIStackView(arrangedSubviews: [firstNameField])
+        stackview.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(stackview)
+        stackview.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 10).isActive = true
+        stackview.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        stackview.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        
+        driver = FormDriver(initial: PersonalInfo(), build: form, title: "Test Form")
     }
 }

@@ -21,7 +21,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.rootViewController = navigationController
         
         navigationController.viewControllers = [
-            driver.formViewController
+            //driver.formViewController
+            NoRenderViewController()
         ]
         window?.makeKeyAndVisible()
                 

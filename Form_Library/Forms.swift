@@ -8,9 +8,10 @@
 
 import UIKit
 
-typealias Form<A> = Element<[Section], A>
+typealias Form<A> = Element<[Any], A>
 typealias Element<El, A> = (RenderingContext<A>) -> RenderedElement<El, A>
 typealias RenderedSection<A> = Element<Section, A>
+typealias InputSection<A> = Element<UIView, A>
 
 struct RenderingContext<State> {
     let state: State
@@ -30,21 +31,18 @@ struct RenderedElement<Element, State> {
 class FormDriver<State> {
     var formViewController: FormViewController!
     
-    var rendered: RenderedElement<[Section], State>!
+    var rendered: RenderedElement<[Any], State>!
     
     var formValidation: FormValidation = FormValidation()
     
     var state: State {
         didSet {
             rendered.update(state)
-            formViewController.reloadSections()
+            //formViewController.reloadSections()
         }
     }
     
-    // TODO: init with build closure that returns RenderedElement<[FormField], State>
-    // This will allow you to use form driver with existing UI elements
-    
-    init(initial state: State, build: (RenderingContext<State>) -> RenderedElement<[Section], State>, title: String = "") {
+    init(initial state: State, build: (RenderingContext<State>) -> RenderedElement<[Any], State>, title: String = "") {
         self.state = state
         
         // Create form context
@@ -73,7 +71,7 @@ class FormDriver<State> {
         rendered.update(state)
         
         // Set up form tvc
-        formViewController = FormViewController(sections: rendered.element, title: title)
+        //formViewController = FormViewController(sections: rendered.element, title: title)
     }
 }
 
@@ -263,6 +261,19 @@ func section<State>(_ cells: [Element<FormCell, State>], footer keyPath: KeyPath
 }
 
 func sections<State>(_ sections: [RenderedSection<State>]) -> Form<State> {
+    return { context in
+        let renderedSections = sections.map { $0(context) }
+        let strongReferences = renderedSections.flatMap { $0.strongReferences }
+        let update: (State) -> () = { state in
+            for c in renderedSections {
+                c.update(state)
+            }
+        }
+        return RenderedElement(element: renderedSections.map { $0.element }, strongReferences: strongReferences, update: update)
+    }
+}
+
+func inputSection<State>(_ sections: [InputSection<State>]) -> Form<State> {
     return { context in
         let renderedSections = sections.map { $0(context) }
         let strongReferences = renderedSections.flatMap { $0.strongReferences }
