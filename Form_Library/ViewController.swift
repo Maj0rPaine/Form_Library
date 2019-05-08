@@ -8,73 +8,6 @@
 
 import UIKit
 
-//enum ShowPreview {
-//    case always
-//    case never
-//    case whenUnlocked
-//
-//    static let all: [ShowPreview] = [.always, .whenUnlocked, .never]
-//
-//    var text: String {
-//        switch self {
-//        case .always: return "Always"
-//        case .whenUnlocked: return "When Unlocked"
-//        case .never: return "Never"
-//        }
-//    }
-//}
-//
-//struct Hotspot {
-//    var isEnabled: Bool = true
-//    var password: String = "hello"
-//    var networkName: String = "My Network"
-//    var showPreview: ShowPreview = .always
-//}
-//
-//extension Hotspot {
-//    var enabledSectionTitle: String? {
-//        return isEnabled ? "Personal Hotspot Enabled" : nil
-//    }
-//}
-//
-//struct Settings {
-//    var hotspot = Hotspot()
-//
-//    var hotspotEnabled: String {
-//        return hotspot.isEnabled ? "On" : "Off"
-//    }
-//}
-//
-//let showPreviewForm: Form<Hotspot> =
-//    sections([
-//        section(
-//            ShowPreview.all.map { option in
-//                optionCell(title: option.text, option: option, keyPath: \.showPreview)
-//            }
-//        )
-//    ])
-//
-//let hotspotForm: Form<Hotspot> =
-//    sections([
-//        section([
-//            controlCell(title: "Personal Hotspot", control: formSwitch(keyPath: \.isEnabled))
-//        ], footer: \Hotspot.enabledSectionTitle),
-//        section ([
-//            detailTextCell(title: "Notification", keyPath: \.showPreview.text, form: showPreviewForm)
-//        ], isVisible: \.isEnabled),
-//        section([
-//            nestedTextField(title: "Password", keyPath: \.password),
-//            nestedTextField(title: "Network Name", keyPath: \.networkName)
-//        ], isVisible: \.isEnabled)
-//    ])
-//
-//let settingsForm: Form<Settings> =
-//    sections([
-//        section([
-//            detailTextCell(title: "Personal Hotspot", keyPath: \Settings.hotspotEnabled, form: bind(form: hotspotForm, to: \.hotspot))
-//        ])
-//    ])
-
 struct PersonalInfo {
     var firstName: String = ""
     var lastName: String = ""
@@ -91,62 +24,119 @@ struct Address {
     var zip: String = ""
 }
 
+let firstNameField = FormField(rules: [.required], placeholder: "First Name")
+let lastNameField = FormField(rules: [.required], placeholder: "Last Name")
+let ssnField = FormField(rules: [.ssn], mask: MaskedFormat.ssnFormat, placeholder: "SSN", keyboardType: .decimalPad)
+let dobField = FormField(rules: [.date], mask: MaskedFormat.dateFormat, placeholder: "Birthdate", keyboardType: .decimalPad)
+let phoneField = FormField(rules: [.phone], mask: MaskedFormat.phoneFormat, placeholder: "Phone Number", keyboardType: .decimalPad)
+let streetField = FormField(rules: [.required], placeholder: "Street")
+let cityField = FormField(rules: [.required], placeholder: "City")
+let stateField = FormPicker(with: ["A"], textField: FormField(rules: [.required], placeholder: "State"))
+let zipField = FormField(rules: [.zip], placeholder: "Zip Code", keyboardType: .decimalPad)
+
+// MARK: - Rendering view controller
+
 let form: Form<PersonalInfo> =
-    sections([
-        section([
-            validatingCell(control: formTextField(textField: FormField(rules: [.required], placeholder: "First Name"), keyPath: \.firstName)),
-            validatingCell(control: formTextField(textField: FormField(rules: [.required], placeholder: "Last Name"), keyPath: \.lastName)),
-            validatingCell(control: formTextField(textField: FormField(rules: [.ssn], mask: MaskedFormat.ssnFormat, placeholder: "SSN", keyboardType: .decimalPad), keyPath: \.ssn)),
-            validatingCell(control: formTextField(textField: FormField(rules: [.date], mask: MaskedFormat.dateFormat, placeholder: "Birthdate", keyboardType: .decimalPad), keyPath: \.birthdate)),
-            validatingCell(control: formTextField(textField: FormField(rules: [.phone], mask: MaskedFormat.phoneFormat, placeholder: "Phone Number", keyboardType: .decimalPad), keyPath: \.phone)),
-        ]),
-        section([
-            validatingCell(control: formTextField(textField: FormField(rules: [.required], placeholder: "Street"), keyPath: \.address.street)),
-            validatingCell(control: formTextField(textField: FormField(rules: [.required], placeholder: "City"), keyPath: \.address.city)),
-            validatingCell(control: formPickerField(formPicker: FormPicker(with: ["A"], textField: FormField(rules: [.required], placeholder: "State")), keyPath: \.address.state)),
-            validatingCell(control: formTextField(textField: FormField(rules: [.zip], placeholder: "Zip Code", keyboardType: .decimalPad), keyPath: \.address.zip))
+    renderedSections([
+        renderedSection([
+            controlCell(control: formTextField(textField: firstNameField, keyPath: \.firstName)),
+            controlCell(control: formTextField(textField: lastNameField, keyPath: \.lastName)),
+            controlCell(control: formTextField(textField: ssnField, keyPath: \.ssn)),
+            controlCell(control: formTextField(textField: dobField, keyPath: \.birthdate)),
+            controlCell(control: formTextField(textField: phoneField, keyPath: \.phone)),
+            ]),
+        renderedSection([
+            controlCell(control: formTextField(textField: streetField, keyPath: \.address.street)),
+            controlCell(control: formTextField(textField: cityField, keyPath: \.address.city)),
+            controlCell(control: formPickerField(formPicker: stateField, keyPath: \.address.state)),
+            controlCell(control: formTextField(textField: zipField, keyPath: \.address.zip))
             ])
-    ])
+        ])
 
 
-let driver = TestFormDriver(initial: PersonalInfo(), build: form, title: "Test Form")
+//let driver = TestFormDriver(initial: PersonalInfo(), build: form, title: "Test Form")
+//
+//class TestFormDriver<State>: FormDriver<State> {
+//    override init(initial state: State, build: Element<[Any], State>, title: String) {
+//        super.init(initial: state, build: build)
+//
+//        formViewController?.title = title
+//
+//        formViewController?.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(saveForm))
+//    }
+//
+//    @objc func saveForm() {
+//        dump(state)
+//        formValidation.validate()
+//    }
+//}
 
-class TestFormDriver<State>: FormDriver<State> {
-    override init(initial state: State, build: Element<[Any], State>, title: String) {
-        super.init(initial: state, build: build)
+// MARK: - Rendering view controller
 
-        self.formViewController.title = title
+class RenderingController: UIViewController {
+    var driver: FormDriver<PersonalInfo>!
 
-        self.formViewController.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(saveForm))
-    }
-
-    @objc func saveForm() {
-        dump(state)
-        self.formValidation.validate()
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        driver = FormDriver(
+            initial: PersonalInfo(),
+            build: renderedSections([
+                renderedSection([
+                    controlCell(control: formTextField(textField: firstNameField, keyPath: \.firstName)),
+                    controlCell(control: formTextField(textField: lastNameField, keyPath: \.lastName)),
+                    controlCell(control: formTextField(textField: ssnField, keyPath: \.ssn)),
+                    controlCell(control: formTextField(textField: dobField, keyPath: \.birthdate)),
+                    controlCell(control: formTextField(textField: phoneField, keyPath: \.phone)),
+                    ]),
+                renderedSection([
+                    controlCell(control: formTextField(textField: streetField, keyPath: \.address.street)),
+                    controlCell(control: formTextField(textField: cityField, keyPath: \.address.city)),
+                    controlCell(control: formPickerField(formPicker: stateField, keyPath: \.address.state)),
+                    controlCell(control: formTextField(textField: zipField, keyPath: \.address.zip))
+                    ])
+                ]),
+            renderingController: self)
     }
 }
 
-class NoRenderViewController: UIViewController {
-    let firstNameField: FormField = FormField(rules: [.required], placeholder: "First Name")
-    
-    lazy var form: Form<PersonalInfo> = {
-        return inputSection([
-            formTextField(textField: firstNameField, keyPath: \.firstName)])
-    }()
-    
+// MARK: - Non rendering view controller
+
+class NonRenderingController: UIViewController {
     var driver: FormDriver<PersonalInfo>!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         
-        let stackview = UIStackView(arrangedSubviews: [firstNameField])
+        let stackview = UIStackView(arrangedSubviews: [firstNameField, lastNameField, ssnField, dobField, phoneField, streetField, cityField, stateField.textField, zipField])
+        stackview.axis = .vertical
+        stackview.spacing = 5.0
         stackview.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(stackview)
         stackview.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 10).isActive = true
         stackview.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
         stackview.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         
-        driver = FormDriver(initial: PersonalInfo(), build: form, title: "Test Form")
+        driver = FormDriver(
+            initial: PersonalInfo(),
+            build: section([
+                formTextField(textField: firstNameField, keyPath: \.firstName),
+                formTextField(textField: lastNameField, keyPath: \.lastName),
+                formTextField(textField: ssnField, keyPath: \.ssn),
+                formTextField(textField: dobField, keyPath: \.birthdate),
+                formTextField(textField: phoneField, keyPath: \.phone),
+                formTextField(textField: streetField, keyPath: \.address.street),
+                formTextField(textField: cityField, keyPath: \.address.city),
+                formPickerField(formPicker: stateField, keyPath: \.address.state),
+                formTextField(textField: zipField, keyPath: \.address.zip)
+                ]))
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(saveForm))
+    }
+    
+    @objc func saveForm() {
+        dump(driver.state)
+        driver.formValidation.validate()
     }
 }

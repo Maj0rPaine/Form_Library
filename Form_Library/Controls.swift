@@ -42,7 +42,7 @@ class FormField: UITextField, FormValidatable {
         }
     }
     
-    var maskedListener: MaskedListener?
+    private var maskedListener: MaskedListener?
         
     private var errorLabel: FormErrorLabel = FormErrorLabel()
     
