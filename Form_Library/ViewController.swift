@@ -96,7 +96,8 @@ class RenderingController: UIViewController {
                     controlCell(control: formTextField(textField: zipField, keyPath: \.address.zip))
                     ])
                 ]),
-            renderingController: self)
+            title: "Test Form",
+            presentingController: self)
     }
 }
 

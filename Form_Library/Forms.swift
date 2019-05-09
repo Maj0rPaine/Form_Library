@@ -40,7 +40,7 @@ class FormDriver<State> {
         }
     }
     
-    init(initial state: State, build: (FormContext<State>) -> FormElement<[Any], State>, title: String = "", renderingController: UIViewController? = nil) {
+    init(initial state: State, build: (FormContext<State>) -> FormElement<[Any], State>, title: String = "", presentingController: UIViewController? = nil) {
         self.state = state
         
         // Create form context
@@ -60,8 +60,9 @@ class FormDriver<State> {
         
         // Set up form tvc
         if let renderedSections = formElement.element as? [TableSection] {
-            formViewController = FormViewController(sections: renderedSections, title: title)
-            renderingController?.renderChildTableViewController(controller: formViewController!)
+            formViewController = FormViewController(sections: renderedSections)
+            presentingController?.renderChildTableViewController(controller: formViewController!)
+            presentingController?.title = title
         }
     }
 }

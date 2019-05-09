@@ -127,10 +127,9 @@ class FormViewController: UITableViewController {
         return sections.filter { $0.isVisible }
     }
     
-    init(sections: [TableSection], title: String, firstResponder: UIResponder? = nil) {
+    init(sections: [TableSection], firstResponder: UIResponder? = nil) {
         super.init(style: .grouped)
         self.sections = sections
-        self.title = title
         previouslyVisibleSections = visibleSections
         self.firstResponder = firstResponder
     }
