@@ -42,6 +42,21 @@ class FormField: UITextField, FormValidatable {
         }
     }
     
+    var shouldValidate: Bool {
+        if case .pristine = inputState {
+            return false
+        }
+        return true
+    }
+    
+    override var text: String? {
+        didSet {
+            if let newText = text, !newText.isEmpty {
+                inputState = .dirty
+            }
+        }
+    }
+    
     private var maskedListener: MaskedListener?
         
     private var errorLabel: FormErrorLabel = FormErrorLabel()

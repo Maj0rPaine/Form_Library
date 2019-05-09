@@ -110,18 +110,25 @@ func formSwitch<State>(keyPath: WritableKeyPath<State, Bool>) -> Element<UIView,
 
 func formTextField<State>(textField: FormField, keyPath: WritableKeyPath<State, String>) -> Element<UIView, State> {
     return { context in
-        let didUpdate = TargetAction {
-            context.change { $0[keyPath: keyPath] = textField.text ?? "" }
+        let didEnd = TargetAction {
             context.validation.validateField(textField)
         }
         
-        textField.addTarget(didUpdate, action: #selector(TargetAction.action(_:)), for: .editingDidEnd)
-        textField.addTarget(didUpdate, action: #selector(TargetAction.action(_:)), for: .editingDidEndOnExit)
-        textField.addTarget(didUpdate, action: #selector(TargetAction.action(_:)), for: .editingChanged)
+        let didChange = TargetAction {
+            context.change { $0[keyPath: keyPath] = textField.text ?? "" }
+            
+            if textField.shouldValidate {
+                context.validation.validateField(textField)
+            }
+        }
+        
+        textField.addTarget(didEnd, action: #selector(TargetAction.action(_:)), for: .editingDidEnd)
+        textField.addTarget(didEnd, action: #selector(TargetAction.action(_:)), for: .editingDidEndOnExit)
+        textField.addTarget(didChange, action: #selector(TargetAction.action(_:)), for: .editingChanged)
     
         context.validation.register(textField)
         
-        return FormElement(element: textField, strongReferences: [didUpdate], update: { state in
+        return FormElement(element: textField, strongReferences: [didEnd, didChange], update: { state in
             textField.text = state[keyPath: keyPath]
         })
     }

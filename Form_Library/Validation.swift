@@ -13,6 +13,7 @@ import SwiftValidator
 
 enum FormValidatableState {
     case pristine
+    case dirty
     case valid
     case invalid(message: String)
     
