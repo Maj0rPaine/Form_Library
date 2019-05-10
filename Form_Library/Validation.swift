@@ -18,12 +18,26 @@ enum FormValidatableState {
     case invalid(message: String)
     
     var message: String {
-        switch self {
-        case .invalid(let message):
-            return message
-        default:
-            return ""
+        get {
+            if case .invalid(let message) = self {
+                return message
+            } else {
+                return ""
+            }
+        } set {
+            if newValue.isEmpty {
+                self = .valid
+            } else {
+                self = .invalid(message: newValue)
+            }
         }
+    }
+    
+    var shouldValidate: Bool {
+        if case .pristine = self {
+            return false
+        }
+        return true
     }
 }
 
@@ -34,11 +48,6 @@ protocol FormValidatable: class {
 }
 
 // MARK: - Validation
-
-struct FormValidationError {
-    var field: UITextField?
-    var message: String?
-}
 
 enum Rules {
     case required
@@ -51,16 +60,10 @@ enum Rules {
     case phone
 }
 
-struct FormValidation: ValidationDelegate {
+struct FormValidation {
     private var validator: Validator = Validator()
     
-    private var didValidate: ((_ errors: [FormValidationError]?) -> ())?
-    
     init() {}
-    
-    init(didValidate: @escaping (_ errors: [FormValidationError]?) -> ()) {
-        self.didValidate = didValidate
-    }
     
     private func build(_ rules: [Rules]) -> [Rule] {
         var validationRules: [Rule] = []
@@ -85,38 +88,27 @@ struct FormValidation: ValidationDelegate {
         validator.registerField(field, rules: build(field.rules))
     }
     
-    func validate() {
-        validator.validate(self)
+    func validateForm(_ completion: @escaping ([String]?) -> ()) {
+        validator.validate { errors in
+            guard !errors.isEmpty else {
+                completion(nil)
+                return
+            }
+            
+            for (field, error) in errors {
+                if let field = field as? FormField {
+                    field.setErrorMessage(error.errorMessage)
+                }
+            }
+            
+            completion(errors.map { $0.1.errorMessage })
+        }
     }
     
     func validateField(_ field: FormField) {
         validator.validateField(field) { error in
-            if error == nil {
-                field.inputState = .valid
-            } else {
-                field.inputState = .invalid(message: error?.errorMessage ?? "")
-            }
+            field.setErrorMessage(error?.errorMessage ?? "")
         }
-    }
-    
-    // MARK: - SwiftValidator delegate
-    
-    internal func validationSuccessful() {
-        didValidate?(nil)
-    }
-    
-    internal func validationFailed(_ errors: [(Validatable, ValidationError)]) {
-        dump(errors.map { $0.1.errorMessage })
-        var validationErrors: [FormValidationError] = []
-       
-        for (field, error) in errors {
-            if let field = field as? FormField {
-                field.inputState = .invalid(message: error.errorMessage)
-            }
-            validationErrors.append(FormValidationError(field: field as? UITextField, message: error.errorMessage))
-        }
-        
-        didValidate?(validationErrors)
     }
 }
 

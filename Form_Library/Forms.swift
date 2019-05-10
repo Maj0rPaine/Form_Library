@@ -26,11 +26,11 @@ struct FormElement<Element, State> {
 }
 
 class FormDriver<State> {
-    var formViewController: FormViewController?
+    private var formViewController: FormViewController?
     
-    var formElement: FormElement<[Any], State>!
+    private var formElement: FormElement<[Any], State>!
     
-    var formValidation: FormValidation = FormValidation()
+    private var formValidation: FormValidation = FormValidation()
     
     var state: State {
         didSet {
@@ -40,7 +40,11 @@ class FormDriver<State> {
         }
     }
     
-    init(initial state: State, build: (FormContext<State>) -> FormElement<[Any], State>, title: String = "", presentingController: UIViewController? = nil) {
+    init(initial
+        state: State,
+        build: (FormContext<State>) -> FormElement<[Any], State>,
+        title: String = "",
+        presentingController: UIViewController? = nil) {
         self.state = state
         
         // Create form context
@@ -64,6 +68,12 @@ class FormDriver<State> {
             presentingController?.renderChildTableViewController(controller: formViewController!)
             presentingController?.title = title
         }
+    }
+}
+
+extension FormDriver {
+    func validateForm(_ completion: @escaping (_ errors: [String]?) -> ()) {
+        formValidation.validateForm(completion)
     }
 }
 

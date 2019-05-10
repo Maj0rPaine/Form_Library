@@ -43,10 +43,7 @@ class FormField: UITextField, FormValidatable {
     }
     
     var shouldValidate: Bool {
-        if case .pristine = inputState {
-            return false
-        }
-        return true
+        return inputState.shouldValidate
     }
     
     override var text: String? {
@@ -76,6 +73,10 @@ class FormField: UITextField, FormValidatable {
             maskedListener = MaskedListener()
             delegate = maskedListener?.setMask(mask, notations: notations)
         }
+    }
+
+    func setErrorMessage(_ message: String) {
+        inputState.message = message
     }
 }
 

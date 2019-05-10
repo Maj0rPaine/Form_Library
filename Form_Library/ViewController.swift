@@ -98,6 +98,17 @@ class RenderingController: UIViewController {
                 ]),
             title: "Test Form",
             presentingController: self)
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(saveForm))
+    }
+    
+    @objc func saveForm() {
+        dump(driver.state)
+        driver.validateForm { (errors) in
+            if let errors = errors {
+                print(errors)
+            }
+        }
     }
 }
 
@@ -138,6 +149,6 @@ class NonRenderingController: UIViewController {
     
     @objc func saveForm() {
         dump(driver.state)
-        driver.formValidation.validate()
+        //driver.formValidation.validate()
     }
 }
