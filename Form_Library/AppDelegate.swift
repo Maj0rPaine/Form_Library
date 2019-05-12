@@ -21,8 +21,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.rootViewController = navigationController
         
         navigationController.viewControllers = [
-            RenderingController()
-            //NonRenderingController()
+            //RenderingController()
+            NonRenderingController()
         ]
         window?.makeKeyAndVisible()
                 

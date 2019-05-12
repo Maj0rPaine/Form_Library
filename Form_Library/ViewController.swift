@@ -112,24 +112,40 @@ class RenderingController: UIViewController {
     }
 }
 
-// MARK: - Non rendering view controller
-
-class NonRenderingController: UIViewController {
-    var driver: FormDriver<PersonalInfo>!
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .white
+class NonRenderingView: UIView {
+    init() {
+        super.init(frame: CGRect.zero)
+        backgroundColor = .white
         
         let stackview = UIStackView(arrangedSubviews: [firstNameField, lastNameField, ssnField, dobField, phoneField, streetField, cityField, stateField.textField, zipField])
         stackview.axis = .vertical
         stackview.spacing = 5.0
         stackview.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(stackview)
-        stackview.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 10).isActive = true
-        stackview.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-        stackview.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
-        
+        addSubview(stackview)
+        stackview.leftAnchor.constraint(equalTo: leftAnchor, constant: 10).isActive = true
+        stackview.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
+        stackview.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor).isActive = true
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+// MARK: - Non rendering view controller
+
+class NonRenderingController: UIViewController {
+    var driver: FormDriver<PersonalInfo>!
+    
+    var formView = NonRenderingView()
+    
+    override func loadView() {
+        self.view = formView
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    
         driver = FormDriver(
             initial: PersonalInfo(),
             build: section([
@@ -149,6 +165,8 @@ class NonRenderingController: UIViewController {
     
     @objc func saveForm() {
         dump(driver.state)
-        //driver.formValidation.validate()
+        driver.validateForm { (errors) in
+            print(errors)
+        }
     }
 }

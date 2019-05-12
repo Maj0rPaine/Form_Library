@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3F8F2A87227B8D88001EFE7D /* Controls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8F2A86227B8D88001EFE7D /* Controls.swift */; };
+		3F8F2A87227B8D88001EFE7D /* FormErrorLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8F2A86227B8D88001EFE7D /* FormErrorLabel.swift */; };
 		3F8F2A89227CD77C001EFE7D /* Masks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8F2A88227CD77C001EFE7D /* Masks.swift */; };
 		3FADA32421221FDA00FA2A6B /* Forms.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FADA32321221FDA00FA2A6B /* Forms.swift */; };
 		3FB4AD492121F0DE008866D0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB4AD482121F0DE008866D0 /* AppDelegate.swift */; };
@@ -16,6 +16,12 @@
 		3FB4AD5E2121F0DF008866D0 /* Form_LibraryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB4AD5D2121F0DF008866D0 /* Form_LibraryTests.swift */; };
 		3FB4AD692121F0DF008866D0 /* Form_LibraryUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB4AD682121F0DF008866D0 /* Form_LibraryUITests.swift */; };
 		3FB4AD772121F0FC008866D0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB4AD762121F0FC008866D0 /* ViewController.swift */; };
+		3FC9D3022285B0B4001689FE /* FormField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC9D3012285B0B4001689FE /* FormField.swift */; };
+		3FC9D3042285B0C7001689FE /* PickerField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC9D3032285B0C7001689FE /* PickerField.swift */; };
+		3FC9D3072285B177001689FE /* Validatables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC9D3062285B177001689FE /* Validatables.swift */; };
+		3FC9D3092285B19D001689FE /* Rules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC9D3082285B19D001689FE /* Rules.swift */; };
+		3FC9D30C2285B2D8001689FE /* Cells.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC9D30B2285B2D8001689FE /* Cells.swift */; };
+		3FC9D30E2285B2DE001689FE /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC9D30D2285B2DE001689FE /* Section.swift */; };
 		3FEE0E1D2279E80E00F4FA70 /* FormsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FEE0E1B2279E80E00F4FA70 /* FormsViewController.swift */; };
 		3FEE0E24227A492E00F4FA70 /* Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FEE0E23227A492E00F4FA70 /* Validation.swift */; };
 		92136010063CA3066EFCDD9F /* Pods_Form_LibraryTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80B50B6CDE6D25BB16451870 /* Pods_Form_LibraryTests.framework */; };
@@ -45,7 +51,7 @@
 		13BB25830207B1A6E4701F80 /* Pods-Form_LibraryTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Form_LibraryTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Form_LibraryTests/Pods-Form_LibraryTests.release.xcconfig"; sourceTree = "<group>"; };
 		2369A911CEBF9E98A6205798 /* Pods-Form_Library.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Form_Library.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Form_Library/Pods-Form_Library.debug.xcconfig"; sourceTree = "<group>"; };
 		2897EC605BDB276516D1E906 /* Pods-Form_LibraryUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Form_LibraryUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Form_LibraryUITests/Pods-Form_LibraryUITests.debug.xcconfig"; sourceTree = "<group>"; };
-		3F8F2A86227B8D88001EFE7D /* Controls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Controls.swift; sourceTree = "<group>"; };
+		3F8F2A86227B8D88001EFE7D /* FormErrorLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormErrorLabel.swift; sourceTree = "<group>"; };
 		3F8F2A88227CD77C001EFE7D /* Masks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Masks.swift; sourceTree = "<group>"; };
 		3FADA32321221FDA00FA2A6B /* Forms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Forms.swift; sourceTree = "<group>"; };
 		3FADA3252123051A00FA2A6B /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MyPlayground.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -61,6 +67,12 @@
 		3FB4AD682121F0DF008866D0 /* Form_LibraryUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Form_LibraryUITests.swift; sourceTree = "<group>"; };
 		3FB4AD6A2121F0DF008866D0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3FB4AD762121F0FC008866D0 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		3FC9D3012285B0B4001689FE /* FormField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormField.swift; sourceTree = "<group>"; };
+		3FC9D3032285B0C7001689FE /* PickerField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerField.swift; sourceTree = "<group>"; };
+		3FC9D3062285B177001689FE /* Validatables.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Validatables.swift; sourceTree = "<group>"; };
+		3FC9D3082285B19D001689FE /* Rules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rules.swift; sourceTree = "<group>"; };
+		3FC9D30B2285B2D8001689FE /* Cells.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cells.swift; sourceTree = "<group>"; };
+		3FC9D30D2285B2DE001689FE /* Section.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Section.swift; sourceTree = "<group>"; };
 		3FEE0E1B2279E80E00F4FA70 /* FormsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FormsViewController.swift; sourceTree = "<group>"; };
 		3FEE0E23227A492E00F4FA70 /* Validation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Validation.swift; sourceTree = "<group>"; };
 		80B50B6CDE6D25BB16451870 /* Pods_Form_LibraryTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Form_LibraryTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -130,9 +142,9 @@
 				3FB4AD542121F0DF008866D0 /* Info.plist */,
 				3FADA3252123051A00FA2A6B /* MyPlayground.playground */,
 				3FADA32321221FDA00FA2A6B /* Forms.swift */,
-				3FEE0E1B2279E80E00F4FA70 /* FormsViewController.swift */,
-				3F8F2A86227B8D88001EFE7D /* Controls.swift */,
-				3FEE0E23227A492E00F4FA70 /* Validation.swift */,
+				3FC9D30A2285B2B4001689FE /* Controller */,
+				3FC9D3002285B09E001689FE /* Controls */,
+				3FC9D3052285B15A001689FE /* Validation */,
 				3F8F2A88227CD77C001EFE7D /* Masks.swift */,
 			);
 			path = Form_Library;
@@ -154,6 +166,36 @@
 				3FB4AD6A2121F0DF008866D0 /* Info.plist */,
 			);
 			path = Form_LibraryUITests;
+			sourceTree = "<group>";
+		};
+		3FC9D3002285B09E001689FE /* Controls */ = {
+			isa = PBXGroup;
+			children = (
+				3F8F2A86227B8D88001EFE7D /* FormErrorLabel.swift */,
+				3FC9D3012285B0B4001689FE /* FormField.swift */,
+				3FC9D3032285B0C7001689FE /* PickerField.swift */,
+			);
+			path = Controls;
+			sourceTree = "<group>";
+		};
+		3FC9D3052285B15A001689FE /* Validation */ = {
+			isa = PBXGroup;
+			children = (
+				3FEE0E23227A492E00F4FA70 /* Validation.swift */,
+				3FC9D3062285B177001689FE /* Validatables.swift */,
+				3FC9D3082285B19D001689FE /* Rules.swift */,
+			);
+			path = Validation;
+			sourceTree = "<group>";
+		};
+		3FC9D30A2285B2B4001689FE /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				3FEE0E1B2279E80E00F4FA70 /* FormsViewController.swift */,
+				3FC9D30B2285B2D8001689FE /* Cells.swift */,
+				3FC9D30D2285B2DE001689FE /* Section.swift */,
+			);
+			path = Controller;
 			sourceTree = "<group>";
 		};
 		9055E2DFCBD453894A85B207 /* Frameworks */ = {
@@ -390,11 +432,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3FC9D3042285B0C7001689FE /* PickerField.swift in Sources */,
+				3FC9D30C2285B2D8001689FE /* Cells.swift in Sources */,
 				3FADA32421221FDA00FA2A6B /* Forms.swift in Sources */,
 				3F8F2A89227CD77C001EFE7D /* Masks.swift in Sources */,
-				3F8F2A87227B8D88001EFE7D /* Controls.swift in Sources */,
+				3FC9D3072285B177001689FE /* Validatables.swift in Sources */,
+				3FC9D3022285B0B4001689FE /* FormField.swift in Sources */,
+				3F8F2A87227B8D88001EFE7D /* FormErrorLabel.swift in Sources */,
+				3FC9D30E2285B2DE001689FE /* Section.swift in Sources */,
 				3FB4AD492121F0DE008866D0 /* AppDelegate.swift in Sources */,
 				3FEE0E1D2279E80E00F4FA70 /* FormsViewController.swift in Sources */,
+				3FC9D3092285B19D001689FE /* Rules.swift in Sources */,
 				3FEE0E24227A492E00F4FA70 /* Validation.swift in Sources */,
 				3FB4AD772121F0FC008866D0 /* ViewController.swift in Sources */,
 			);
