@@ -32,6 +32,8 @@ class FormDriver<State> {
     
     private var formValidation: FormValidation = FormValidation()
     
+    var isValid: ((Bool) -> ())?
+    
     var state: State {
         didSet {
             formElement.update(state)
@@ -68,11 +70,16 @@ class FormDriver<State> {
             presentingController?.renderChildTableViewController(controller: formViewController!)
             presentingController?.title = title
         }
+        
+        // Check validation state
+        formValidation.isValid = { [unowned self] valid in
+            self.isValid?(valid)
+        }
     }
 }
 
 extension FormDriver {
-    func validateForm(_ completion: @escaping (_ errors: [String]?) -> ()) {
+    func validateForm(_ completion: ((_ errors: [String]?) -> ())? = nil) {
         formValidation.validateForm(completion)
     }
 }
@@ -137,7 +144,7 @@ func formTextField<State>(textField: FormField, keyPath: WritableKeyPath<State, 
         textField.addTarget(didEnd, action: #selector(TargetAction.action(_:)), for: .editingDidEndOnExit)
         textField.addTarget(didChange, action: #selector(TargetAction.action(_:)), for: .editingChanged)
     
-        context.validation.register(textField)
+        context.validation.observe(textField)
         
         return FormElement(element: textField, strongReferences: [didEnd, didChange], update: { state in
             textField.text = state[keyPath: keyPath]
@@ -159,7 +166,7 @@ func formPickerField<State>(formPicker: FormPicker, keyPath: WritableKeyPath<Sta
         formPicker.textField.addTarget(didUpdate, action: #selector(TargetAction.action(_:)), for: .editingDidEnd)
         formPicker.textField.addTarget(didUpdate, action: #selector(TargetAction.action(_:)), for: .editingDidEndOnExit)
         
-        context.validation.register(formPicker.textField)
+        context.validation.observe(formPicker.textField)
         
         return FormElement(element: formPicker.textField, strongReferences: [didUpdate], update: { state in
             formPicker.selectRow(value: state[keyPath: keyPath])

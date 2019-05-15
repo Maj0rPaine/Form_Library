@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum ValidatableState {
+enum ValidatableState: Equatable {
     case pristine
     case dirty
     case valid
@@ -31,10 +31,16 @@ enum ValidatableState {
     }
     
     var shouldValidate: Bool {
-        if case .pristine = self {
+        return self != .pristine
+    }
+    
+    var notValid: Bool {
+        switch self {
+        case .invalid(_):
+            return true
+        default:
             return false
         }
-        return true
     }
 }
 

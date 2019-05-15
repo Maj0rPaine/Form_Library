@@ -8,7 +8,7 @@
 
 import UIKit
 
-class FormField: UITextField, Validatable {
+class FormField: UITextField, Validatable {    
     var rules: [Rules] = []
     
     var inputState: ValidatableState = .pristine {
@@ -24,13 +24,20 @@ class FormField: UITextField, Validatable {
         }
     }
     
-    var shouldValidate: Bool {
-        return inputState.shouldValidate
+    var shouldValidate: Bool { return inputState.shouldValidate }
+    
+    var notValid: Bool { return inputState.notValid }
+    
+    private var isInitialEdit: Bool {
+        guard let newText = text,
+            !newText.isEmpty,
+            inputState == .pristine else { return false }
+        return true
     }
     
     override var text: String? {
         didSet {
-            if let newText = text, !newText.isEmpty {
+            if isInitialEdit {
                 inputState = .dirty
             }
         }

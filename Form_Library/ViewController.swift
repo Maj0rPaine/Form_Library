@@ -158,15 +158,21 @@ class NonRenderingController: UIViewController {
                 formTextField(textField: cityField, keyPath: \.address.city),
                 formPickerField(formPicker: stateField, keyPath: \.address.state),
                 formTextField(textField: zipField, keyPath: \.address.zip)
-                ]))
+                ]),
+            title: "Test Form")
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(saveForm))
+        let saveButton = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(saveForm))
+        saveButton.isEnabled = false
+        navigationItem.rightBarButtonItem = saveButton
+        
+        driver.isValid = { valid in
+            saveButton.isEnabled = valid
+        }
+        
+        driver.validateForm()
     }
     
     @objc func saveForm() {
         dump(driver.state)
-        driver.validateForm { (errors) in
-            print(errors)
-        }
     }
 }
