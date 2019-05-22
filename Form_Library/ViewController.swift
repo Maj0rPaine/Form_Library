@@ -26,9 +26,9 @@ struct Address {
 
 let firstNameField = FormField(rules: [.required], placeholder: "First Name")
 let lastNameField = FormField(rules: [.required], placeholder: "Last Name")
-let ssnField = FormField(rules: [.ssn], mask: MaskedFormat.ssnFormat, placeholder: "SSN", keyboardType: .decimalPad)
-let dobField = FormField(rules: [.date], mask: MaskedFormat.dateFormat, placeholder: "Birthdate", keyboardType: .decimalPad)
-let phoneField = FormField(rules: [.phone], mask: MaskedFormat.phoneFormat, placeholder: "Phone Number", keyboardType: .decimalPad)
+let ssnField = MaskedFormField(rules: [.ssn], placeholder: "SSN", keyboardType: .decimalPad, mask: .ssnFormat)
+let dobField = MaskedFormField(rules: [.date], placeholder: "Birthdate", keyboardType: .decimalPad, mask: .dateFormat)
+let phoneField = MaskedFormField(rules: [.phone], placeholder: "Phone Number", keyboardType: .decimalPad, mask: .phoneFormat)
 let streetField = FormField(rules: [.required], placeholder: "Street")
 let cityField = FormField(rules: [.required], placeholder: "City")
 let stateField = FormPicker(with: ["A"], textField: FormField(rules: [.required], placeholder: "State"))
@@ -169,7 +169,7 @@ class NonRenderingController: UIViewController {
             saveButton.isEnabled = valid
         }
         
-        driver.validateForm()
+        //driver.validateForm()
     }
     
     @objc func saveForm() {

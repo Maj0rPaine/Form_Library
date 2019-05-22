@@ -13,6 +13,8 @@ class FormErrorLabel: UILabel {
         didSet {
             if let text = text {
                 isHidden = text.isEmpty
+            } else {
+                isHidden = true
             }
         }
     }

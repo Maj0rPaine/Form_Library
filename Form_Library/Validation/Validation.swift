@@ -23,10 +23,11 @@ enum Rules {
 class FormValidation {
     private var validator: Validator = Validator()
     
-    private var registeredFields: [FormField] = []
+    private(set) var registeredFields: [FormField] = []
     
-    private var hasErrors: Bool {
-        return !registeredFields.filter { $0.notValid }.isEmpty
+    var hasErrors: Bool {
+        let invalidErrorsNotEmpty = !registeredFields.filter { $0.notValid }.isEmpty
+        return invalidErrorsNotEmpty
     }
     
     var isValid: ((Bool) -> ())?
@@ -54,8 +55,12 @@ class FormValidation {
     
     // MARK: - Swift Validator methods
     
-    func register(_ field: FormField) {
+    private func register(_ field: FormField) {
         validator.registerField(field, rules: build(field.rules))
+    }
+    
+    private func unregister(_ field: FormField) {
+        validator.unregisterField(field)
     }
     
     func validateForm(_ completion: (([String]?) -> ())? = nil) {
@@ -88,6 +93,13 @@ class FormValidation {
     func observe(_ field: FormField) {
         register(field)
         registeredFields.append(field)
+    }
+    
+    func unobserve(_ field: FormField) {
+        unregister(field)
+        if let index = registeredFields.firstIndex(of: field) {
+            registeredFields.remove(at: index)
+        }
     }
     
     private func updateValidationState() {

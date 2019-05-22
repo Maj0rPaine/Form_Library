@@ -43,11 +43,11 @@ class FormField: UITextField, Validatable {
         }
     }
     
-    private var maskedListener: MaskedListener?
-    
     private var errorLabel: FormErrorLabel = FormErrorLabel()
     
-    convenience init(rules: [Rules], mask: String? = nil, notations: MaskedNotations? = nil, placeholder: String? = nil, keyboardType: UIKeyboardType = .default) {
+    convenience init(rules: [Rules],
+                     placeholder: String? = nil,
+                     keyboardType: UIKeyboardType = .default) {
         self.init()
         self.rules = rules
         self.placeholder = placeholder
@@ -57,11 +57,6 @@ class FormField: UITextField, Validatable {
         addSubview(errorLabel)
         errorLabel.centerYAnchor.constraint(equalTo: centerYAnchor, constant: 0).isActive = true
         errorLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -8).isActive = true
-        
-        if let mask = mask {
-            maskedListener = MaskedListener()
-            delegate = maskedListener?.setMask(mask, notations: notations)
-        }
     }
     
     func setErrorMessage(_ message: String) {
